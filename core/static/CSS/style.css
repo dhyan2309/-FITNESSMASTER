@@ -11,6 +11,11 @@
   --purple-soft: rgba(124,58,237,0.08);
   --purple-mid:  #9333ea;
   --purple-lite: #a855f7;
+  --red:         #ef4444;
+  --green:       #10b981;
+  --amber:       #f59e0b;
+  --blue:        #3b82f6;
+
   --white:       #f2f2f2;
   --grey:        #d4d4d4;   /* very bright */
   --grey2:       #b0b0b0;   /* very bright */   /* was #777777 */
@@ -19,6 +24,15 @@
   --r:           8px;
   --t:           0.25s ease;
 }
+
+/* Color Utilities */
+.btn-red { background: var(--red); color: #fff; }
+.ic-red { background: rgba(239,68,68,0.1); color: var(--red); }
+.badge-red { background: rgba(239,68,68,0.12); color: var(--red); }
+.pf-red { background: var(--red); width: 75%; }
+.pf-mid { background: var(--amber); width: 60%; }
+.pf-hi  { background: var(--green); width: 90%; }
+
 
 /* ─── RESET ─────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }

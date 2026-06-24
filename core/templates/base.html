@@ -227,6 +227,10 @@
 
 
   <script>
+    // Remove skeleton-loading class once page is fully loaded
+    window.addEventListener('load', () => {
+      document.documentElement.classList.remove('skeleton-loading');
+    });
 
     const mainNav = document.getElementById('mainNav');
     if (mainNav) {
