@@ -33,6 +33,19 @@
 .pf-mid { background: var(--amber); width: 60%; }
 .pf-hi  { background: var(--green); width: 90%; }
 
+/* Stat Card Color Variants */
+.sc-purple::before { background: var(--purple); }
+.sc-purple .stat-val { color: var(--purple-lite); }
+.sc-green::before  { background: var(--green); }
+.sc-green .stat-val { color: var(--green); }
+.sc-amber::before  { background: var(--amber); }
+.sc-amber .stat-val { color: var(--amber); }
+.sc-red::before    { background: var(--red); }
+.sc-red .stat-val   { color: var(--red); }
+.sc-blue::before   { background: var(--blue); }
+.sc-blue .stat-val  { color: var(--blue); }
+
+
 
 /* ─── RESET ─────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
