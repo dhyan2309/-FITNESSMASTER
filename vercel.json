@@ -1,0 +1,14 @@
+{
+  "builds": [
+    {
+      "src": "fitnessmaster/asgi.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "fitnessmaster/asgi.py"
+    }
+  ]
+}
