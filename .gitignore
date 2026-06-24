@@ -2,3 +2,9 @@
 *.pyc
 __pycache__/
 db.sqlite3
+.venv/
+venv/
+ENV/
+.vscode/
+*.log
+media/product_images/
