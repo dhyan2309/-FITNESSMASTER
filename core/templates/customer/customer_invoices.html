@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% load package_extras %}
+{% block title %}{% trans "My Invoices" %} — FitnessMaster{% endblock %}
+
+{% block content %}
+<div class="dash-page">
+
+  <div class="dash-top">
+    <div class="dash-welcome">
+      <h1>{% trans "MY INVOICES" %}</h1>
+      <p>{% trans "Your payment invoices" %} 🧾</p>
+    </div>
+    <a href="{% url 'customer_dashboard' %}" class="btn btn-outline"
+       style="padding:9px 20px;font-size:13px;">← {% trans "Dashboard" %}</a>
+  </div>
+
+  {% if invoices %}
+    <div class="d-card">
+      <table class="d-table">
+        <thead>
+          <tr>
+            <th>{% trans "Invoice No" %}</th>
+            <th>{% trans "Date" %}</th>
+            <th>{% trans "Amount" %}</th>
+            <th>{% trans "Action" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for invoice in invoices %}
+          <tr>
+            <td style="color:#a78bfa;font-weight:700;">{{ invoice.invoice_no }}</td>
+            <td style="color:#888;font-size:13px;">{{ invoice.generated_on }}</td>
+            <td style="color:#22c55e;font-weight:700;">
+              {% convert_price invoice.payment.amount %}
+            </td>
+            <td>
+              <a href="{% url 'customer_invoice_view' invoice.pk %}"
+                 style="color:#a78bfa;font-size:13px;font-weight:600;">
+                🧾 {% trans "View & Print" %}
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+  {% else %}
+    <div class="d-card" style="text-align:center;padding:60px 20px;">
+      <div style="font-size:64px;margin-bottom:16px;">🧾</div>
+      <h2 style="color:#e2e8f0;margin-bottom:10px;">{% trans "No Invoices Yet" %}</h2>
+      <p style="color:#888;max-width:400px;margin:0 auto;">
+        {% trans "Your invoices will appear here once admin generates them." %}
+      </p>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

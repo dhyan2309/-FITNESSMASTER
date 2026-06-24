@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}Enquiries — Admin{% endblock %}
+{% block content %}
+<div class="dash-page">
+
+  <div class="dash-top">
+    <div class="dash-welcome">
+      <h1>ENQUIRIES</h1>
+      <p>Manage customer enquiries</p>
+    </div>
+  </div>
+
+  <div class="d-card">
+    <table class="d-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Contact</th>
+          <th>Message</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for enq in enquiries %}
+        <tr>
+          <td>
+            <div style="font-weight:600;color:#e2e8f0;">{{ enq.full_name }}</div>
+          </td>
+          <td>
+            <div style="font-size:12px;color:#888;">{{ enq.email }}</div>
+            <div style="font-size:12px;color:#888;">{{ enq.phone }}</div>
+          </td>
+          <td style="max-width:250px;">
+            <div style="font-size:13px;color:#cbd5e1;">{{ enq.message|truncatewords:12 }}</div>
+          </td>
+          <td>
+            <span style="font-size:12px;padding:3px 10px;border-radius:50px;font-weight:600;
+                         background:{% if enq.status == 'New' %}#1a2a3a;color:#60a5fa
+                         {% elif enq.status == 'In Progress' %}#3a2a1a;color:#f59e0b
+                         {% else %}#1a3a2a;color:#22c55e{% endif %};">
+              {{ enq.status }}
+            </span>
+          </td>
+          <td style="font-size:12px;color:#888;">{{ enq.created_at|date:"M d, Y H:i" }}</td>
+          <td style="display:flex;gap:12px;">
+            <a href="{% url 'admin_enquiry_detail' enq.pk %}"
+               style="color:#a78bfa;font-size:13px;font-weight:600;">View</a>
+            <a href="{% url 'admin_enquiry_delete' enq.pk %}"
+               onclick="return confirm('Delete this enquiry?')"
+               style="color:#ff4d4d;font-size:13px;font-weight:600;">Delete</a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" class="d-empty">No enquiries yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+{% endblock %}
+

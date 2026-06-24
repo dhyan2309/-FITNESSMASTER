@@ -1,0 +1,234 @@
+<head>
+  {% load i18n %}
+  {% block title %}{% trans "Register" %} — FitnessMaster{% endblock %}
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css" />
+  {% block extra_head %}{% endblock %}
+</head>
+{% include 'partials/skeleton_loader.html' %}
+
+{% block content %}
+
+<section class="auth-page">
+  <div class="auth-box auth-box-lg">
+
+    <!-- Logo -->
+    <div class="auth-logo">
+      <div class="auth-logo-box">FM</div>
+      <span class="auth-logo-name">FITNESS<span>MASTER</span></span>
+    </div>
+
+    <!-- Heading -->
+    <h1 class="auth-title">{% trans "CREATE ACCOUNT" %}</h1>
+    <p class="auth-sub">{% trans "Join FitnessMaster and start your transformation today." %}</p>
+
+    <!-- Django messages -->
+    {% if messages %}
+      {% for message in messages %}
+        <div style="background:rgba(229,62,62,0.1);border:1px solid rgba(229,62,62,0.3);border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:13px;color:#fc8181;">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <!-- Role Selector -->
+    <div class="form-group">
+      <label class="form-label">{% trans "I am joining as" %}</label>
+      <div class="role-select" id="roleSelect">
+        <div class="role-opt selected" data-role="customer" onclick="selectRole(this)">
+          <span class="role-opt-icon">🏃</span>
+          <div class="role-opt-label">{% trans "Customer" %}</div>
+        </div>
+        <div class="role-opt" data-role="trainer" onclick="selectRole(this)">
+          <span class="role-opt-icon">🏅</span>
+          <div class="role-opt-label">{% trans "Trainer" %}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Register Form -->
+    <form method="POST" action="{% url 'register' %}" id="registerForm">
+      {% csrf_token %}
+      <input type="hidden" name="role" id="roleInput" value="customer"/>
+      <input type="hidden" name="next" value="{{ next_url }}">
+
+      <!-- Name row -->
+       <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="user">{% trans "User Name" %}</label>
+          <input
+            type="text"
+            id="user"
+            name="username"
+            class="form-input"
+            placeholder="{% trans 'User Name' %}"
+            required
+          />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="firstName">{% trans "Full Name" %}</label>
+          <input
+            type="text"
+            id="fullname"
+            name="fullname"
+            class="form-input"
+            placeholder="{% trans 'Full Name' %}"
+            required
+          />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="regEmail">{% trans "Email Address" %}</label>
+        <input
+          type="email"
+          id="regEmail"
+          name="email"
+          class="form-input"
+          placeholder="you@example.com"
+          autocomplete="email"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="phoneno">{% trans "Phone Number" %}</label>
+        <input
+          type="text"
+          id="mobileno"
+            name="phone_number"
+          class="form-input"
+          placeholder="{% trans 'Phone Number' %}"
+            value="{{ request.POST.phone_number }}"
+          autocomplete="email"
+          required
+        />
+      </div>
+      
+
+      <!-- Trainer category (shown only when Trainer is selected) -->
+      <div class="form-group" id="trainerCatGroup" style="display:none;">
+        <label class="form-label" for="trainerCategory">{% trans "Training Category" %}</label>
+        <select id="trainerCategory" name="trainer_category" class="form-select">
+          <option value="">{% trans "Select your discipline" %}</option>
+          <option value="gym">🏋️ {% trans "Gym" %} </option>
+          <option value="yoga">🧘 {% trans "Yoga" %}</option>
+          <option value="zumba">💃 {% trans "Zumba" %}</option>
+        </select>
+      </div>
+      {% comment %} <div class="form-group">
+        <label class="form-label" for="specialization">specialization</label>
+        <input
+          type="text"
+          id="specialization"
+          name="specialization"
+          class="form-input"
+          placeholder="specialization"
+          required
+        />
+      </div> {% endcomment %}
+      <!-- Password row -->
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="regPassword">{% trans "Password" %}</label>
+          <div class="pass-wrap">
+            <input
+              type="password"
+              id="regPassword"
+              name="password"
+              class="form-input"
+              placeholder="{% trans 'Create password' %}"
+              autocomplete="new-password"
+              required
+              oninput="checkStrength(this.value)"
+            />
+            <button type="button" class="pass-toggle" id="togglePass1" aria-label="{% trans 'Show password' %}">👁</button>
+          </div>
+          <div class="pass-strength">
+            <div class="pass-strength-bar"><div class="pass-strength-fill" id="strengthFill"></div></div>
+            <span class="pass-strength-text" id="strengthText">{% trans "Enter a password" %}</span>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-auth">
+        {% trans "Create Account" %} →
+      </button>
+    </form>
+
+    <!-- Switch to login -->
+    <p class="auth-switch">
+      {% trans "Already have an account?" %}
+      <a href="{% url 'login' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+        {% trans "Sign in" %} →
+      </a>
+    </p>
+
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
+<script>
+  /* Role selector */
+  function selectRole(el) {
+    document.querySelectorAll('.role-opt').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    const role = el.dataset.role;
+    document.getElementById('roleInput').value = role;
+    document.getElementById('trainerCatGroup').style.display = role === 'trainer' ? 'block' : 'none';
+  }
+
+  /* Intl Tel Input */
+  const phoneInput = document.querySelector("#mobileno");
+  const iti = window.intlTelInput(phoneInput, {
+    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js",
+    separateDialCode: true,
+    preferredCountries: ["in", "us", "gb"],
+  });
+
+  document.getElementById('registerForm').addEventListener('submit', function() {
+    phoneInput.value = iti.getNumber();
+  });
+
+  /* Password visibility toggles */
+  function togglePw(btnId, inpId) {
+    document.getElementById(btnId).addEventListener('click', function () {
+      const inp = document.getElementById(inpId);
+      const show = inp.type === 'password';
+      inp.type = show ? 'text' : 'password';
+      this.textContent = show ? '🙈' : '👁';
+    });
+  }
+  togglePw('togglePass1', 'regPassword');
+
+  /* Password strength */
+  function checkStrength(val) {
+    const fill = document.getElementById('strengthFill');
+    const text = document.getElementById('strengthText');
+    let score = 0;
+    if (val.length >= 8)              score++;
+    if (/[A-Z]/.test(val))            score++;
+    if (/[0-9]/.test(val))            score++;
+    if (/[^A-Za-z0-9]/.test(val))    score++;
+    const levels = [
+      { w: '0%',   bg: 'transparent', label: '{% trans "Enter a password" %}' },
+      { w: '25%',  bg: '#e53e3e',     label: '{% trans "Weak" %}' },
+      { w: '50%',  bg: '#ed8936',     label: '{% trans "Fair" %}' },
+      { w: '75%',  bg: '#9333ea',     label: '{% trans "Good" %}' },
+      { w: '100%', bg: '#7c3aed',     label: '{% trans "Strong 💪" %}' },
+    ];
+    const l = val.length === 0 ? levels[0] : levels[score];
+    fill.style.width      = l.w;
+    fill.style.background = l.bg;
+    text.textContent      = val.length === 0 ? levels[0].label : l.label;
+  }
+</script>
+
+
+{% endblock %}

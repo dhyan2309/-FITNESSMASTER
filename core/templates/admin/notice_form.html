@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}New Notice — Admin{% endblock %}
+{% block content %}
+<div class="dash-page">
+
+  <div class="dash-top">
+    <div class="dash-welcome">
+      <h1>NEW NOTICE</h1>
+      <p>Send an announcement to members</p>
+    </div>
+    <a href="{% url 'admin_notice_list' %}" class="btn btn-outline"
+       style="padding:9px 20px;font-size:13px;">← Back</a>
+  </div>
+
+  <div class="d-card" style="max-width:600px;">
+    <form method="POST" style="display:flex;flex-direction:column;gap:18px;">
+      {% csrf_token %}
+
+      <div>
+        <label style="font-size:12px;font-weight:700;color:#888;letter-spacing:1px;
+                      text-transform:uppercase;display:block;margin-bottom:6px;">Title *</label>
+        <input type="text" name="title" required
+               style="width:100%;background:#1e1e2e;border:1px solid #2d2d3d;border-radius:10px;
+                      padding:12px 16px;color:#e2e8f0;font-size:14px;outline:none;box-sizing:border-box;">
+      </div>
+
+      <div>
+        <label style="font-size:12px;font-weight:700;color:#888;letter-spacing:1px;
+                      text-transform:uppercase;display:block;margin-bottom:6px;">Send To *</label>
+        <select name="sent_to"
+                style="width:100%;background:#1e1e2e;border:1px solid #2d2d3d;border-radius:10px;
+                       padding:12px 16px;color:#e2e8f0;font-size:14px;outline:none;box-sizing:border-box;">
+          <option value="all">🌐 All Members</option>
+          <option value="customer">👤 Customers Only</option>
+          <option value="trainer">🏅 Trainers Only</option>
+        </select>
+      </div>
+
+      <div>
+        <label style="font-size:12px;font-weight:700;color:#888;letter-spacing:1px;
+                      text-transform:uppercase;display:block;margin-bottom:6px;">Message *</label>
+        <textarea name="message" rows="5" required
+                  style="width:100%;background:#1e1e2e;border:1px solid #2d2d3d;border-radius:10px;
+                         padding:12px 16px;color:#e2e8f0;font-size:14px;outline:none;
+                         resize:vertical;box-sizing:border-box;"></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-purple"
+              style="padding:13px;font-size:14px;font-weight:700;border:none;cursor:pointer;border-radius:10px;">
+        📢 Send Notice
+      </button>
+
+    </form>
+  </div>
+
+</div>
+{% endblock %}

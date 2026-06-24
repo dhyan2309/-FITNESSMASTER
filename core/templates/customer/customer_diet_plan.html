@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% block title %}{% trans "My Diet Plan" %} — FitnessMaster{% endblock %}
+
+{% block content %}
+<div class="dash-page">
+
+  
+  <div class="dash-top">
+    <div class="dash-welcome">
+      <h1>{% trans "MY DIET PLANS" %}</h1>
+      <p>{% trans "Nutrition plans assigned by your trainer" %} 🥗</p>
+    </div>
+    <a href="{% url 'customer_dashboard' %}" class="btn btn-outline" style="padding:9px 20px;font-size:13px;">
+      ← {% trans "Back to Dashboard" %}
+    </a>
+  </div>
+
+  {% if diet_plans %}
+
+    
+    <div style="display:flex;gap:16px;margin-bottom:28px;flex-wrap:wrap;">
+      <div class="stat-card sc-green" style="flex:1;min-width:160px;">
+        <span class="stat-icon">🥗</span>
+        <div class="stat-val">{{ diet_plans.count }}</div>
+        <div class="stat-lab">{% trans "Total Plans" %}</div>
+      </div>
+      <div class="stat-card sc-purple" style="flex:1;min-width:160px;">
+        <span class="stat-icon">🔥</span>
+        <div class="stat-val">
+          {% with diet_plans.first as latest %}
+            {{ latest.calories }}
+          {% endwith %}
+        </div>
+        <div class="stat-lab">{% trans "Latest kcal/day" %}</div>
+      </div>
+      <div class="stat-card sc-blue" style="flex:1;min-width:160px;">
+        <span class="stat-icon">🏅</span>
+        <div class="stat-val">{{ customer.assigned_trainer.full_name|default:"—" }}</div>
+        <div class="stat-lab">{% trans "Your Trainer" %}</div>
+      </div>
+    </div>
+
+   
+    <div style="display:grid;gap:20px;">
+      {% for plan in diet_plans %}
+      <div class="d-card" style="position:relative;">
+
+        
+        <div style="position:absolute;top:20px;right:20px;background:#7c3aed;color:#fff;
+                    font-size:11px;font-weight:700;padding:4px 12px;border-radius:50px;letter-spacing:1px;">
+          {% trans "PLAN" %} #{{ forloop.counter }}
+        </div>
+
+        
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+          <span class="client-avatar">{{ plan.trainer.full_name|first }}</span>
+          <div>
+            <div style="font-weight:700;color:#e2e8f0;">{{ plan.trainer.full_name }}</div>
+            <div style="font-size:12px;color:#888;">
+              {% if plan.trainer.training_category == 'Gym' %}🏋️
+              {% elif plan.trainer.training_category == 'Yoga' %}🧘
+              {% else %}💃{% endif %}
+              {% trans plan.trainer.training_category %} {% trans "Trainer" %}
+            </div>
+          </div>
+        </div>
+
+        
+        <div style="background:#1e1e2e;border-radius:12px;padding:14px 18px;
+                    margin-bottom:16px;display:flex;align-items:center;gap:12px;">
+          <span style="font-size:28px;">🔥</span>
+          <div>
+            <div style="font-size:24px;font-weight:800;color:#a78bfa;">{{ plan.calories }}</div>
+            <div style="font-size:12px;color:#888;margin-top:1px;">{% trans "Calories per day (kcal)" %}</div>
+          </div>
+        </div>
+
+        
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#7c3aed;letter-spacing:1px;
+                      text-transform:uppercase;margin-bottom:10px;">📋 {% trans "Diet Description" %}</div>
+          <p style="font-size:14px;color:#cbd5e1;line-height:1.8;
+                    white-space:pre-line;margin:0;">{{ plan.description }}</p>
+        </div>
+
+      </div>
+      {% endfor %}
+    </div>
+
+  {% else %}
+
+    <!-- Empty State -->
+    <div class="d-card" style="text-align:center;padding:60px 20px;">
+      <div style="font-size:64px;margin-bottom:16px;">🥗</div>
+      <h2 style="color:#e2e8f0;margin-bottom:10px;">{% trans "No Diet Plans Yet" %}</h2>
+      <p style="color:#888;max-width:400px;margin:0 auto;">
+        {% trans "Your trainer hasn't assigned a diet plan yet. Once they do, it will appear here. Check back soon!" %}
+      </p>
+      <a href="{% url 'customer_dashboard' %}" class="btn btn-purple"
+         style="display:inline-block;margin-top:24px;padding:10px 28px;">
+        ← {% trans "Back to Dashboard" %}
+      </a>
+    </div>
+
+  {% endif %}
+
+</div>
+{% endblock %}

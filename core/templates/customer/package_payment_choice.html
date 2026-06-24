@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% load package_extras %}
+
+{% block title %}{% trans "Choose Payment Method" %} - FitnessMaster{% endblock %}
+
+{% block content %}
+<div class="dash-page">
+  <div class="dash-top">
+    <div class="dash-welcome">
+      <h1>{% trans "CHOOSE PAYMENT" %}</h1>
+      <p>{% trans package.package_name %} {% trans "plan - pick cash or online payment." %}</p>
+    </div>
+    <a href="{% url 'package' %}" class="btn btn-outline"
+       style="padding:9px 20px;font-size:13px;">{% trans "Back to Packages" %}</a>
+  </div>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div style="padding:14px 20px;border-radius:12px;margin-bottom:20px;font-weight:600;
+                  background:{% if message.tags == 'error' %}#ff4d4d{% else %}#22c55e{% endif %};color:#fff;">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  {% if user.is_authenticated and not customer %}
+    <div class="d-card">
+      <div class="d-card-title">{% trans "Account Type" %}</div>
+      <p style="color:#cbd5e1;font-size:14px;line-height:1.8;">
+        {% trans "This payment page is only for customer accounts. The current login does not have a customer profile." %}
+      </p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:18px;">
+        <a href="{% url 'logout' %}" class="btn btn-outline">{% trans "Logout" %}</a>
+      </div>
+    </div>
+  {% else %}
+    <div class="stats-grid" style="margin-bottom:28px;">
+      <div class="stat-card sc-purple">
+        <span class="stat-icon">{% trans "Plan" %}</span>
+        <div class="stat-val" style="font-size:30px;">{{ package.duration }}</div>
+        <div class="stat-lab">{% trans "Month" %}{{ package.duration|pluralize }}</div>
+      </div>
+      <div class="stat-card sc-green">
+        <span class="stat-icon">{% trans "Fee" %}</span>
+        <div class="stat-val" style="font-size:30px;">{% convert_price package.price %}</div>
+        <div class="stat-lab">{% trans "Package Price" %}</div>
+      </div>
+      <div class="stat-card sc-blue">
+        <span class="stat-icon">{% trans "Mode" %}</span>
+        <div class="stat-val" style="font-size:30px;">2</div>
+        <div class="stat-lab">{% trans "Payment Options" %}</div>
+      </div>
+      <div class="stat-card sc-amber">
+        <span class="stat-icon">{% trans "Status" %}</span>
+        <div class="stat-val" style="font-size:30px;">{% trans "Open" %}</div>
+        <div class="stat-lab">{% trans "Select One" %}</div>
+      </div>
+    </div>
+
+    <div class="dash-grid">
+      <div class="d-card">
+        <div class="d-card-title">{% trans "Package Summary" %}</div>
+
+        <div style="background:#1e1e2e;border-radius:12px;padding:18px;margin-bottom:18px;">
+          <div style="display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;">
+            <div>
+              <div style="font-size:11px;color:#888;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;">
+                {% trans "Selected Plan" %}
+              </div>
+              <div style="font-size:26px;font-family:var(--font-d);letter-spacing:1px;color:#fff;">
+                {{ package.package_name }}
+              </div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:11px;color:#888;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;">
+                {% trans "Duration" %}
+              </div>
+              <div style="font-size:22px;font-family:var(--font-d);letter-spacing:1px;color:#a78bfa;">
+                {{ package.duration }} {% trans "Month" %}{{ package.duration|pluralize }}
+              </div>
+            </div>
+          </div>
+          <hr style="border:none;border-top:1px solid #2d2d3d;margin:18px 0;">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;">
+            <span style="color:#cbd5e1;font-size:14px;">{% trans "Total Amount" %}</span>
+            <span style="font-size:30px;font-family:var(--font-d);letter-spacing:1px;color:#fff;">
+              {% convert_price package.price %}
+            </span>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-wrap:wrap; gap:12px; margin-top:15px;">
+          {% for feature in package.description|package_features %}
+            <div style="display:flex; align-items:center; gap:6px; font-size:13px; color:#cbd5e1; background:rgba(255,255,255,0.05); padding:6px 12px; border-radius:50px; border:1px solid rgba(255,255,255,0.1);">
+              <span style="color:#22c55e;">✅</span> {{ feature }}
+            </div>
+          {% endfor %}
+        </div>
+
+        {% if customer and customer.assigned_package_id == package.pk %}
+          <div style="margin-top:18px;padding:14px 16px;border-radius:12px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);color:#86efac;font-size:13px;">
+            {% trans "This package is already assigned to your account." %}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="d-card">
+        <div class="d-card-title">{% trans "Payment Methods" %}</div>
+
+        {% if not user.is_authenticated %}
+          <div style="margin-bottom:18px;padding:14px 16px;border-radius:12px;background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.22);color:#c4b5fd;font-size:13px;line-height:1.7;">
+            {% trans "Log in or create an account to complete the payment. After sign in, you will return to this page." %}
+          </div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
+            <a href="{% url 'login' %}?next={{ request.path|urlencode }}" class="btn btn-purple">{% trans "Login" %}</a>
+            <a href="{% url 'register' %}?next={{ request.path|urlencode }}" class="btn btn-outline">{% trans "Register" %}</a>
+          </div>
+        {% endif %}
+
+        <form method="post" style="margin-bottom:14px;">
+          {% csrf_token %}
+          <input type="hidden" name="payment_method" value="cash">
+          <button type="submit" class="btn btn-outline"
+                  style="width:100%;justify-content:center;padding:16px 18px;font-size:14px;">
+            {% trans "Cash Payment" %}
+          </button>
+        </form>
+        <p style="color:#888;font-size:13px;line-height:1.7;margin-bottom:18px;">
+          {% trans "Pay at the gym reception. The payment will be recorded in your account." %}
+        </p>
+
+        <form method="post">
+          {% csrf_token %}
+          <input type="hidden" name="payment_method" value="online">
+          <button type="submit" class="btn btn-purple"
+                  style="width:100%;justify-content:center;padding:16px 18px;font-size:14px;">
+            {% trans "Online Payment" %}
+          </button>
+        </form>
+        <p style="color:#888;font-size:13px;line-height:1.7;margin-top:12px;">
+          {% trans "Razorpay supports UPI, card, net banking, and wallet payments." %}
+        </p>
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en" class="skeleton-loading">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}FitnessMaster{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
+  {% load static %}
+  {% load i18n %}
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  {% block extra_head %}{% endblock %}
+</head>
+<script type="text/javascript">
+  (function (c, l, a, r, i, t, y) {
+    c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
+    t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
+    y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
+  })(window, document, "clarity", "script", "wo8grarvbi");
+</script>
+
+<body class="{% if show_admin_shell %}admin-shell-page{% endif %}">
+  {% include 'partials/skeleton_loader.html' %}
+
+  {% if show_admin_shell %}
+  <div class="admin-shell">
+    {% include 'admin/admin_sidebar.html' %}
+    <div class="admin-main">
+      {% else %}
+
+
+      <nav class="nav" id="mainNav">
+        <div class="nav-wrap container" style="padding:0;">
+          <a href="{% url 'index' %}" class="logo">
+            <div class="logo-box">FM</div>
+            <span class="logo-name">FITNESS<span>MASTER</span></span>
+          </a>
+
+          <ul class="nav-links">
+            <li><a href="{% url 'index' %}">{{ t.Home }}</a></li>
+            <li><a href="{% url 'about' %}">{{ t.Features }}</a></li>
+            <li><a href="{% url 'package' %}">{{ t.Packages }}</a></li>
+
+            {% if user.is_authenticated %}
+            {% with role=user.userprofile.role %}
+            {% if role == 'customer' %}
+            <li><a href="{% url 'customer_feedback' %}">{{ t.Feedback }}</a></li>
+
+            {% endif %}
+            {% endwith %}
+            {% endif %}
+            <li><a href="{% url 'enquiry_form' %}">{{ t.Enquiry }}</a></li>
+            {% if user.is_authenticated %}
+            <li><a href="{% url 'dashboard' %}">{{ t.Dashboard }}</a></li>
+            {% endif %}
+
+          </ul>
+
+          <div class="nav-actions">
+            {% if user.is_authenticated %}
+            <a href="{% url 'dashboard' %}" class="btn btn-outline" style="padding:9px 20px;font-size:13px;">{{ t.Dashboard }}</a>
+            <a href="{% url 'logout' %}" class="btn btn-purple" style="padding:9px 20px;font-size:13px;">{{ t.Logout }}</a>
+            {% else %}
+            <a href="{% url 'login' %}" class="btn btn-outline" style="padding:9px 20px;font-size:13px;">{{ t.Login }}</a>
+            <a href="{% url 'register' %}" class="btn btn-purple" style="padding:9px 20px;font-size:13px;">{{ t.Register }} →</a>
+            {% endif %}
+
+            <div style="margin-left:10px; display: flex; align-items: center; gap: 10px;">
+              <!-- Language Selector -->
+              <div class="toggle-group" style="display: flex; background: rgba(255,255,255,0.08); padding: 3px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">
+                <a href="{% url 'set_language' %}?lang=en&next={{ request.path }}" 
+                   class="btn {% if request.LANGUAGE_CODE|slice:':2' == 'en' %}btn-purple{% else %}btn-outline{% endif %}" 
+                   style="padding:7px 12px; font-size:11px; border:none; min-width:40px; text-align:center; border-radius:8px; transition: all 0.3s ease;">EN</a>
+                <a href="{% url 'set_language' %}?lang=hi&next={{ request.path }}" 
+                   class="btn {% if request.LANGUAGE_CODE|slice:':2' == 'hi' %}btn-purple{% else %}btn-outline{% endif %}" 
+                   style="padding:7px 12px; font-size:11px; border:none; min-width:40px; text-align:center; border-radius:8px; transition: all 0.3s ease;">हिं</a>
+              </div>
+
+              <!-- Currency Selector -->
+              <div class="toggle-group" style="display: flex; background: rgba(255,255,255,0.08); padding: 3px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">
+                <a href="{% url 'set_currency' %}?currency=INR&next={{ request.path }}" 
+                   class="btn {% if currency == 'INR' %}btn-purple{% else %}btn-outline{% endif %}" 
+                   style="padding:7px 12px; font-size:11px; border:none; min-width:35px; text-align:center; border-radius:8px; transition: all 0.3s ease;">₹</a>
+                <a href="{% url 'set_currency' %}?currency=USD&next={{ request.path }}" 
+                   class="btn {% if currency == 'USD' %}btn-purple{% else %}btn-outline{% endif %}" 
+                   style="padding:7px 12px; font-size:11px; border:none; min-width:35px; text-align:center; border-radius:8px; transition: all 0.3s ease;">$</a>
+              </div>
+            </div>
+
+          </div>
+
+          <button class="hamburger" id="ham" aria-label="Menu">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </nav>
+
+
+      <div class="mobile-menu" id="mobileMenu">
+        <a href="{% url 'index' %}">{{ t.Home }}</a>
+        <a href="{% url 'about' %}">{{ t.Features }}</a>
+        <a href="{% url 'package' %}">{{ t.Packages }}</a>
+
+        {% if user.is_authenticated %}
+        {% with role=user.userprofile.role %}
+        {% if role == 'customer' %}
+        <a href="{% url 'customer_feedback' %}">{{ t.Feedback }}</a>
+        {% endif %}
+        {% endwith %}
+        {% endif %}
+        <a href="{% url 'enquiry_form' %}">{{ t.Enquiry }}</a>
+        {% if user.is_authenticated %}
+        <a href="{% url 'dashboard' %}">{{ t.Dashboard }}</a>
+        {% endif %}
+
+        <!-- Mobile Language & Currency -->
+        <div style="padding:15px; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 10px;">
+          <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <span style="font-size:12px; color:#888; text-transform: uppercase; letter-spacing:1px;">{% trans "Language" %}</span>
+            <div style="display:flex; gap:5px;">
+               <a href="{% url 'set_language' %}?lang=en&next={{ request.path }}" class="btn {% if request.LANGUAGE_CODE|slice:':2' == 'en' %}btn-purple{% else %}btn-outline{% endif %}" style="padding:5px 10px; font-size:11px;">EN</a>
+               <a href="{% url 'set_language' %}?lang=hi&next={{ request.path }}" class="btn {% if request.LANGUAGE_CODE|slice:':2' == 'hi' %}btn-purple{% else %}btn-outline{% endif %}" style="padding:5px 10px; font-size:11px;">हिं</a>
+            </div>
+          </div>
+          <div style="display:flex; justify-content: space-between; align-items: center;">
+            <span style="font-size:12px; color:#888; text-transform: uppercase; letter-spacing:1px;">{% trans "Currency" %}</span>
+            <div style="display:flex; gap:5px;">
+               <a href="{% url 'set_currency' %}?currency=INR&next={{ request.path }}" class="btn {% if currency == 'INR' %}btn-purple{% else %}btn-outline{% endif %}" style="padding:5px 10px; font-size:11px;">₹</a>
+               <a href="{% url 'set_currency' %}?currency=USD&next={{ request.path }}" class="btn {% if currency == 'USD' %}btn-purple{% else %}btn-outline{% endif %}" style="padding:5px 10px; font-size:11px;">$</a>
+            </div>
+          </div>
+        </div>
+
+
+        <div style="display:flex;gap:10px;margin-top:6px;">
+          {% if user.is_authenticated %}
+          <a href="{% url 'dashboard' %}" class="btn btn-outline" style="flex:1;justify-content:center;padding:10px;">{% trans "My Dashboard" %}</a>
+          <a href="{% url 'logout' %}" class="btn btn-purple" style="flex:1;justify-content:center;padding:10px;">{% trans "Logout" %}</a>
+
+          {% else %}
+
+          <a href="{% url 'login' %}" class="btn btn-outline" style="flex:1;justify-content:center;padding:10px;">{% trans "Log In" %}</a>
+          <a href="{% url 'register' %}" class="btn btn-purple" style="flex:1;justify-content:center;padding:10px;">{% trans "Join Now" %}</a>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+
+
+      <main>
+        {% block content %}{% endblock %}
+      </main>
+
+      {% if show_admin_shell %}
+    </div>
+  </div>
+  {% else %}
+  <footer class="footer" id="contact">
+    <div class="footer-top">
+      <div class="container">
+        <div class="footer-grid">
+
+          <div>
+            <div class="logo">
+              <div class="logo-box">FM</div>
+            </div>
+            <div class="footer-logo-name">FITNESS<span>MASTER</span></div>
+            <p class="footer-about">{% trans "The all-in-one gym management platform built for athletes, trainers, and administrators who demand the best." %}</p>
+            <div class="socials">
+              <a href="#" class="social-btn">📸</a>
+              <a href="#" class="social-btn" style="font-weight:900;font-size:11px;">𝕏</a>
+              <a href="#" class="social-btn" style="font-size:11px;font-weight:700;">f</a>
+              <a href="#" class="social-btn">▶</a>
+            </div>
+          </div>
+
+          <div>
+            <div class="footer-head">{% trans "Platform" %}</div>
+            <ul class="footer-links">
+              <li><a href="{% url 'package' %}">{% trans "Packages" %}</a></li>
+              <li><a href="{% url 'customer_store' %}">{% trans "Fitness Shop" %}</a></li>
+              <li><a href="{% url 'enquiry_form' %}">{% trans "Contact Support" %}</a></li>
+              <li><a href="{% url 'customer_diet_plan' %}">{% trans "Diet Plans" %}</a></li>
+              <li><a href="{% url 'customer_exercise_plan' %}">{% trans "Exercise Library" %}</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <div class="footer-head">{% trans "Company" %}</div>
+            <ul class="footer-links">
+              <li><a href="{% url 'about' %}">{% trans "About Us" %}</a></li>
+              <li><a href="{% url 'index' %}#contact">{% trans "Careers" %}</a></li>
+              <li><a href="{% url 'customer_notices' %}">{% trans "Latest News" %}</a></li>
+              <li><a href="{% url 'about' %}">{% trans "Privacy Policy" %}</a></li>
+              <li><a href="{% url 'about' %}">{% trans "Terms of Use" %}</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <div class="footer-head">{% trans "Contact" %}</div>
+            <ul class="footer-contact">
+              <li><span class="ci">📍</span>123 Fitness Ave, Mumbai 400001</li>
+              <li><span class="ci">📞</span>+91 6352324371</li>
+              <li><span class="ci">✉️</span>dhyan0723@gmail.com</li>
+              <li><span class="ci">⏰</span>Mon–Sat: 5 AM – 10 PM</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="footer-bottom">
+        <p class="footer-copy">© 2025 <b>FitnessMaster</b>. {% trans "All rights reserved." %}</p>
+        <div class="footer-legal">
+          <a href="#">{% trans "Privacy" %}</a>
+          <a href="#">{% trans "Terms" %}</a>
+          <a href="#">{% trans "Sitemap" %}</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  {% endif %}
+
+
+  <script>
+
+    const mainNav = document.getElementById('mainNav');
+    if (mainNav) {
+      window.addEventListener('scroll', () =>
+        mainNav.classList.toggle('scrolled', scrollY > 50), { passive: true });
+    }
+
+    const ham = document.getElementById('ham');
+    const mobileMenu = document.getElementById('mobileMenu');
+    if (ham && mobileMenu) {
+      ham.addEventListener('click', () =>
+        mobileMenu.classList.toggle('open'));
+    }
+
+
+    const revObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('in'); revObs.unobserve(e.target); }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+    document.querySelectorAll('.reveal, .reveal-right').forEach(el => revObs.observe(el));
+
+
+    document.querySelectorAll('a[href^="#"]').forEach(a =>
+      a.addEventListener('click', e => {
+        const t = document.querySelector(a.getAttribute('href'));
+        if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      }));
+  </script>
+  {% block extra_scripts %}{% endblock %}
+
+</body>
+
+</html>

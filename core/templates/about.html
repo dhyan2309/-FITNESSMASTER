@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Train. Track. Transform." %}{% endblock %}
+
+{% block content %}
+
+<section class="section features-bg" id="features">
+  <div class="features-media" aria-hidden="true">
+    <video class="features-video" autoplay muted loop playsinline preload="metadata">
+      <source src="{% static 'videos/features-bg.mp4' %}" type="video/mp4">
+    </video>
+    <div class="features-overlay"></div>
+  </div>
+
+  <div class="container">
+    <div class="features-header reveal">
+      <div class="label">{% trans "Why FitnessMaster" %}</div>
+      <h2 class="title">{% trans "EVERYTHING IN" %}<br>{% trans "ONE PLACE" %}</h2>
+      <p class="sub">{% trans "Built for everyone in your gym - admins, trainers, and members all working from the same platform." %}</p>
+    </div>
+
+    <div class="features-grid reveal d1">
+      <a class="feat-card feat-link" href="{% url 'package' %}">
+        <span class="feat-icon">📦</span>
+        <div class="feat-num">01</div>
+        <div class="feat-title">{% trans "Flexible Packages" %}</div>
+        <p class="feat-desc">{% trans "Admin creates 3-month, 6-month, and 1-year plans with defined start and end dates for each member." %}</p>
+        <span class="feat-cta">{% trans "View Packages" %}</span>
+      </a>
+
+      <a class="feat-card feat-link" href="{% url 'dashboard' %}">
+        <span class="feat-icon">🥗</span>
+        <div class="feat-num">02</div>
+        <div class="feat-title">{% trans "Personalised Diet Plans" %}</div>
+        <p class="feat-desc">{% trans "Trainers assign custom nutrition plans based on each member's goals and monthly body measurements." %}</p>
+        <span class="feat-cta">{% trans "Open Dashboard" %}</span>
+      </a>
+
+      <a class="feat-card feat-link" href="{% url 'dashboard' %}">
+        <span class="feat-icon">🏋️</span>
+        <div class="feat-num">03</div>
+        <div class="feat-title">{% trans "Exercise Plans" %}</div>
+        <p class="feat-desc">{% trans "Structured workout routines across Gym, Yoga, and Zumba - designed by certified trainers." %}</p>
+        <span class="feat-cta">{% trans "Open Dashboard" %}</span>
+      </a>
+
+      <a class="feat-card feat-link" href="{% url 'dashboard' %}">
+        <span class="feat-icon">📈</span>
+        <div class="feat-num">04</div>
+        <div class="feat-title">{% trans "Progress Tracking" %}</div>
+        <p class="feat-desc">{% trans "Members log weight and height monthly. Clear charts show how far they've come over time." %}</p>
+        <span class="feat-cta">{% trans "Open Dashboard" %}</span>
+      </a>
+
+      <a class="feat-card feat-link" href="{% url 'dashboard' %}">
+        <span class="feat-icon">💳</span>
+        <div class="feat-num">05</div>
+        <div class="feat-title">{% trans "Payments & Invoices" %}</div>
+        <p class="feat-desc">{% trans "In-app payments for packages and products. Admins view history and generate invoices instantly." %}</p>
+        <span class="feat-cta">{% trans "Open Dashboard" %}</span>
+      </a>
+
+      <a class="feat-card feat-link" href="{% url 'dashboard' %}">
+        <span class="feat-icon">📬</span>
+        <div class="feat-num">06</div>
+        <div class="feat-title">{% trans "Email Notifications" %}</div>
+        <p class="feat-desc">{% trans "Admins send notices to keep the entire gym community informed of updates, schedules, and changes." %}</p>
+        <span class="feat-cta">{% trans "Open Dashboard" %}</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

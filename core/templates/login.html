@@ -1,0 +1,105 @@
+<head>
+  {% load i18n %}
+  {% block title %}{% trans "Login" %} — FitnessMaster{% endblock %}
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
+  {% block extra_head %}{% endblock %}
+</head>
+{% include 'partials/skeleton_loader.html' %}
+
+{% block content %}
+
+<section class="auth-page">
+  <div class="auth-box">
+
+    <!-- Logo -->
+    <div class="auth-logo">
+      <div class="auth-logo-box">FM</div>
+      <span class="auth-logo-name">FITNESS<span>MASTER</span></span>
+    </div>
+
+    <!-- Heading -->
+    <h1 class="auth-title">{% trans "WELCOME BACK" %}</h1>
+    <p class="auth-sub">{% trans "Sign in to your account to continue your fitness journey." %}</p>
+
+    <!-- Django messages -->
+    {% if messages %}
+      {% for message in messages %}
+        <div style="background:rgba(229,62,62,0.1);border:1px solid rgba(229,62,62,0.3);border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:13px;color:#fc8181;">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <!-- Login Form -->
+    <form method="POST" action="{% url 'login' %}" id="loginForm">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next_url }}">
+
+      <div class="form-group">
+        <label class="form-label" for="username">{% trans "Username or Email" %}</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          class="form-input"
+          placeholder="{% trans 'Enter your username or email' %}"
+          value="{{ request.POST.username }}"
+          autocomplete="username"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">{% trans "Password" %}</label>
+        <div class="pass-wrap">
+          <input
+            type="password"
+            id="password"
+            name="password"
+            class="form-input"
+            placeholder="{% trans 'Enter your password' %}"
+            autocomplete="current-password"
+            required
+          />
+          <button type="button" class="pass-toggle" id="togglePass" aria-label="{% trans 'Show password' %}">👁</button>
+        </div>
+      </div>
+
+      <div class="form-meta">
+        <label class="form-check">
+          <input type="checkbox" name="remember_me" id="rememberMe"/>
+          {% trans "Remember me" %}
+        </label>
+        <a href="#" class="form-forgot">{% trans "Forgot password?" %}</a>
+      </div>
+
+      <button type="submit" class="btn-auth">
+        {% trans "Sign In" %} →
+      </button>
+    </form>
+
+    <!-- Switch to register -->
+    <p class="auth-switch">
+      {% trans "Don't have an account?" %}
+      <a href="{% url 'register' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+        {% trans "Create one free" %} →
+      </a>
+    </p>
+
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  /* Toggle password visibility */
+  document.getElementById('togglePass').addEventListener('click', function () {
+    const inp = document.getElementById('password');
+    const isHidden = inp.type === 'password';
+    inp.type = isHidden ? 'text' : 'password';
+    this.textContent = isHidden ? '🙈' : '👁';
+  });
+</script>
+{% endblock %}

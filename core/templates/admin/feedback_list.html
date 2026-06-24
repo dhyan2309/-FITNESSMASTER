@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Feedback â€” FitnessMaster{% endblock %}
+
+{% block content %}
+<div class="dash-page">
+  <div class="dash-top">
+    <div class="dash-welcome">
+      <h1>FEEDBACK</h1>
+      <p>Customer reviews and suggestions</p>
+    </div>
+    <a href="{% url 'admin_dashboard' %}" class="btn btn-outline" style="padding:9px 20px;font-size:13px;">â† Dashboard</a>
+  </div>
+
+  <div class="d-card">
+    <div class="d-card-title">
+      Feedback Records
+      <span style="color:var(--purple);">{{ feedbacks.count }} Total</span>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-dark table-hover align-middle">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Customer</th>
+            <th>Package</th>
+            <th>Rating</th>
+            <th>Message</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for fb in feedbacks %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td style="font-weight:600;color:#e2e8f0;">{{ fb.customer.full_name }}</td>
+            <td>{{ fb.customer.assigned_package.package_name|default:"â€”" }}</td>
+            <td>
+              <span class="db-badge db-gym">{{ fb.rating }}/5</span>
+            </td>
+            <td style="max-width:420px;color:#cbd5e1;">{{ fb.message }}</td>
+            <td>
+              <a href="{% url 'admin_feedback_delete' fb.pk %}"
+                 class="tbl-btn tbl-del"
+                 onclick="return confirm('Delete this feedback? This cannot be undone.')">
+                Delete
+              </a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6" class="d-empty">No feedback submitted yet.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

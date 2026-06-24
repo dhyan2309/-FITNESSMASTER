@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load package_extras %}
+
+{% block title %}Admin Dashboard — FitnessMaster{% endblock %}
+
+{% block content %}
+<div class="dash-page">
+  <div class="dash-top">
+    <div class="dash-welcome">
+      <h1>ADMIN DASHBOARD</h1>
+      <p>Welcome back, {{ request.user.first_name|default:request.user.username }}</p>
+    </div>
+  </div>
+
+  {% if messages %}
+    {% for msg in messages %}
+      <div class="dash-msg">{{ msg }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <div class="stats-grid">
+    <div class="stat-card sc-amber">
+      <span class="stat-icon">PK</span>
+      <div class="stat-val">{{ total_packages }}</div>
+      <div class="stat-lab">Packages</div>
+    </div>
+    <div class="stat-card sc-purple">
+      <span class="stat-icon">MB</span>
+      <div class="stat-val">{{ total_customers }}</div>
+      <div class="stat-lab">Total Members</div>
+    </div>
+    <div class="stat-card sc-green">
+      <span class="stat-icon">TR</span>
+      <div class="stat-val">{{ total_trainers }}</div>
+      <div class="stat-lab">Total Trainers</div>
+    </div>
+    <div class="stat-card sc-amber">
+      <span class="stat-icon">$</span>
+      <div class="stat-val">{% convert_price total_revenue %}</div>
+      <div class="stat-lab">Total Revenue</div>
+    </div>
+    <div class="stat-card sc-red">
+      <span class="stat-icon">!</span>
+      <div class="stat-val">{{ expiring_count }}</div>
+      <div class="stat-lab">Expiring Soon</div>
+    </div>
+    <div class="stat-card sc-purple">
+      <span class="stat-icon">EQ</span>
+      <div class="stat-val">{{ total_equipment }}</div>
+      <div class="stat-lab">Equipment</div>
+    </div>
+    <div class="stat-card sc-amber">
+      <span class="stat-icon">MT</span>
+      <div class="stat-val">{{ equipment_maintenance }}</div>
+      <div class="stat-lab">Under Maintenance</div>
+    </div>
+    <div class="stat-card sc-green">
+      <span class="stat-icon">EN</span>
+      <div class="stat-val">{{ new_enquiries }}</div>
+      <div class="stat-lab">New Enquiries</div>
+    </div>
+    <div class="stat-card sc-purple">
+      <span class="stat-icon">PM</span>
+      <div class="stat-val">{{ total_payments }}</div>
+      <div class="stat-lab">Payments</div>
+    </div>
+    <div class="stat-card sc-green">
+      <span class="stat-icon">PR</span>
+      <div class="stat-val">{{ total_products }}</div>
+      <div class="stat-lab">Products</div>
+    </div>
+    <div class="stat-card sc-amber">
+      <span class="stat-icon">NO</span>
+      <div class="stat-val">{{ total_notices }}</div>
+      <div class="stat-lab">Notices</div>
+    </div>
+    <div class="stat-card sc-red">
+      <span class="stat-icon">IV</span>
+      <div class="stat-val">{{ total_invoices }}</div>
+      <div class="stat-lab">Invoices</div>
+    </div>
+    <div class="stat-card sc-blue">
+      <span class="stat-icon">FB</span>
+      <div class="stat-val">{{ total_feedbacks }}</div>
+      <div class="stat-lab">Feedback</div>
+    </div>
+  </div>
+
+  <div class="dash-grid">
+    <div class="d-card">
+      <div class="d-card-title">
+        Recent Payments
+        <a href="{% url 'admin_payment_list' %}">View All -></a>
+      </div>
+      <table class="d-table">
+        <thead>
+          <tr>
+            <th>Member</th>
+            <th>Package</th>
+            <th>Amount</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for payment in recent_payments %}
+            <tr>
+              <td>{{ payment.customer.full_name }}</td>
+              <td>{{ payment.customer.assigned_package.package_name|default:"-" }}</td>
+              <td>{% convert_price payment.amount %}</td>
+              <td>{{ payment.payment_date }}</td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="4" class="d-empty">No payments yet</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="dash-col">
+      <div class="d-card">
+        <div class="d-card-title">
+          Expiring This Week
+          <a href="{% url 'customer_list' %}">View All -></a>
+        </div>
+        <table class="d-table">
+          <thead>
+            <tr>
+              <th>Member</th>
+              <th>Expires</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for c in expiring_soon %}
+              <tr>
+                <td>{{ c.full_name }}</td>
+                <td class="exp-date">{{ c.end_date }}</td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="2" class="d-empty">No expiring memberships</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="d-card">
+        <div class="d-card-title">All Admin Pages</div>
+        <div class="quick-grid">
+          <a href="{% url 'package_list' %}" class="quick-btn">Packages</a>
+          <a href="{% url 'trainer_list' %}" class="quick-btn">Trainers</a>
+          <a href="{% url 'customer_list' %}" class="quick-btn">Members</a>
+          <a href="{% url 'admin_payment_list' %}" class="quick-btn">Payments</a>
+          <a href="{% url 'admin_product_list' %}" class="quick-btn">Products</a>
+          <a href="{% url 'admin_notice_list' %}" class="quick-btn">Notices</a>
+          <a href="{% url 'admin_feedback_list' %}" class="quick-btn">Feedback</a>
+          <a href="{% url 'admin_invoice_list' %}" class="quick-btn">Invoices</a>
+          <a href="{% url 'equipment_list' %}" class="quick-btn">Equipment</a>
+          <a href="{% url 'admin_enquiry_list' %}" class="quick-btn">Enquiries</a>
+        </div>
+      </div>
+
+      <div class="d-card">
+        <div class="d-card-title">Quick Create</div>
+        <div class="quick-grid">
+          <a href="{% url 'package_add' %}" class="quick-btn">+ Package</a>
+          <a href="{% url 'trainer_add' %}" class="quick-btn">+ Trainer</a>
+          <a href="{% url 'admin_notice_add' %}" class="quick-btn">+ Notice</a>
+          <a href="{% url 'admin_product_add' %}" class="quick-btn">+ Product</a>
+          <a href="{% url 'equipment_add' %}" class="quick-btn">+ Equipment</a>
+        </div>
+      </div>
+
+      <div class="d-card">
+        <div class="d-card-title">
+          Recent Feedback
+          <a href="{% url 'admin_feedback_list' %}">View All -></a>
+        </div>
+        {% if recent_feedbacks %}
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            {% for fb in recent_feedbacks %}
+              <div style="background:#1e1e2e;border-radius:12px;padding:14px 16px;border-left:3px solid #7c3aed;">
+                <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:8px;flex-wrap:wrap;">
+                  <div style="font-weight:700;color:#e2e8f0;">{{ fb.customer.full_name }}</div>
+                  <div style="font-size:12px;color:#a78bfa;">{{ fb.rating }}/5</div>
+                </div>
+                <div style="font-size:13px;color:#cbd5e1;line-height:1.6;">
+                  {{ fb.message|truncatewords:16 }}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="d-empty" style="padding:18px 0 0;">No feedback submitted yet.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

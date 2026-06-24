@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% block title %}{% trans "Weight & Height Tracker" %} — FitnessMaster{% endblock %}
+
+{% block content %}
+<div class="dash-page">
+
+  
+  <div class="dash-top">
+    <div class="dash-welcome">
+      <h1>{% trans "BODY TRACKER" %}</h1>
+      <p>{% trans "Log your monthly weight & height progress" %} 📊</p>
+    </div>
+    <a href="{% url 'customer_dashboard' %}" class="btn btn-outline"
+       style="padding:9px 20px;font-size:13px;">
+      ← {% trans "Back to Dashboard" %}
+    </a>
+  </div>
+
+  
+  {% if messages %}
+    {% for message in messages %}
+      <div style="padding:14px 20px;border-radius:12px;margin-bottom:20px;font-weight:600;
+                  background:{% if message.tags == 'error' %}#ff4d4d{% else %}#22c55e{% endif %};color:#fff;">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+
+  {% if latest %}
+  <div class="stats-grid" style="margin-bottom:28px;">
+    <div class="stat-card sc-purple">
+      <span class="stat-icon">⚖️</span>
+      <div class="stat-val">{{ latest.weight_kg }} kg</div>
+      <div class="stat-lab">{% trans "Latest Weight" %}</div>
+    </div>
+    <div class="stat-card sc-blue">
+      <span class="stat-icon">📏</span>
+      <div class="stat-val">{{ latest.height_cm }} cm</div>
+      <div class="stat-lab">{% trans "Latest Height" %}</div>
+    </div>
+    <div class="stat-card sc-green">
+      <span class="stat-icon">🧮</span>
+      <div class="stat-val">{{ latest.bmi }}</div>
+      <div class="stat-lab">{% trans "BMI" %}</div>
+    </div>
+    <div class="stat-card
+      {% if latest.bmi_category == 'Normal' %}sc-green
+      {% elif latest.bmi_category == 'Underweight' %}sc-blue
+      {% elif latest.bmi_category == 'Overweight' %}sc-amber
+      {% else %}sc-red{% endif %}">
+      <span class="stat-icon">
+        {% if latest.bmi_category == 'Normal' %}✅
+        {% elif latest.bmi_category == 'Underweight' %}📉
+        {% elif latest.bmi_category == 'Overweight' %}⚠️
+        {% else %}🔴{% endif %}
+      </span>
+      <div class="stat-val" style="font-size:18px;">{{ latest.bmi_category }}</div>
+      <div class="stat-lab">{% trans "BMI Status" %}</div>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="dash-grid">
+
+    
+    <div class="d-card">
+      <div class="d-card-title">{% trans "Log New Entry" %}</div>
+
+      <form method="POST" style="display:flex;flex-direction:column;gap:18px;margin-top:12px;">
+        {% csrf_token %}
+
+       
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#888;letter-spacing:1px;
+                        text-transform:uppercase;display:block;margin-bottom:6px;">
+            {% trans "Weight" %} (kg) *
+          </label>
+          <input type="number" name="weight_kg" step="0.1" min="1" max="300"
+                 placeholder="e.g. 70.5" required
+                 style="width:100%;background:#1e1e2e;border:1px solid #2d2d3d;border-radius:10px;
+                        padding:12px 16px;color:#e2e8f0;font-size:14px;outline:none;box-sizing:border-box;">
+        </div>
+
+        
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#888;letter-spacing:1px;
+                        text-transform:uppercase;display:block;margin-bottom:6px;">
+            {% trans "Height" %} (cm) *
+          </label>
+          <input type="number" name="height_cm" step="0.1" min="50" max="250"
+                 placeholder="e.g. 170" required
+                 style="width:100%;background:#1e1e2e;border:1px solid #2d2d3d;border-radius:10px;
+                        padding:12px 16px;color:#e2e8f0;font-size:14px;outline:none;box-sizing:border-box;">
+        </div>
+
+        
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#888;letter-spacing:1px;
+                        text-transform:uppercase;display:block;margin-bottom:6px;">
+            {% trans "Note (optional)" %}
+          </label>
+          <input type="text" name="note"
+                 placeholder="e.g. After morning workout"
+                 style="width:100%;background:#1e1e2e;border:1px solid #2d2d3d;border-radius:10px;
+                        padding:12px 16px;color:#e2e8f0;font-size:14px;outline:none;box-sizing:border-box;">
+        </div>
+
+        
+        <div style="background:#1e1e2e;border-radius:12px;padding:14px 16px;">
+          <div style="font-size:12px;font-weight:700;color:#7c3aed;
+                      letter-spacing:1px;margin-bottom:10px;">📋 {% trans "BMI REFERENCE" %}</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px;">
+            <span style="color:#60a5fa;">📉 {% trans "Under 18.5 — Underweight" %}</span>
+            <span style="color:#22c55e;">✅ {% trans "18.5–24.9 — Normal" %}</span>
+            <span style="color:#f59e0b;">⚠️ {% trans "25–29.9 — Overweight" %}</span>
+            <span style="color:#ff4d4d;">🔴 {% trans "30+ — Obese" %}</span>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-purple"
+                style="padding:13px;font-size:14px;font-weight:700;
+                       border:none;cursor:pointer;border-radius:10px;">
+          💾 {% trans "Save Record" %}
+        </button>
+
+      </form>
+    </div>
+
+   
+    <div class="d-card">
+      <div class="d-card-title">{% trans "My Progress History" %}</div>
+
+      {% if records %}
+        <table class="d-table" style="margin-top:8px;">
+          <thead>
+            <tr>
+              <th>{% trans "Date" %}</th>
+              <th>{% trans "Weight" %}</th>
+              <th>{% trans "Height" %}</th>
+              <th>{% trans "BMI" %}</th>
+              <th>{% trans "Status" %}</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for record in records %}
+            <tr>
+              <td style="color:#888;font-size:13px;">{{ record.recorded_on }}</td>
+              <td style="font-weight:600;color:#e2e8f0;">{{ record.weight_kg }} kg</td>
+              <td style="color:#e2e8f0;">{{ record.height_cm }} cm</td>
+              <td style="color:#a78bfa;font-weight:700;">{{ record.bmi }}</td>
+              <td>
+                <span style="font-size:12px;padding:3px 10px;border-radius:50px;font-weight:600;
+                  {% if record.bmi_category == 'Normal' %}background:#1a3a2a;color:#22c55e;
+                  {% elif record.bmi_category == 'Underweight' %}background:#1a2a3a;color:#60a5fa;
+                  {% elif record.bmi_category == 'Overweight' %}background:#3a2a1a;color:#f59e0b;
+                  {% else %}background:#3a1a1a;color:#ff4d4d;{% endif %}">
+                  {{ record.bmi_category }}
+                </span>
+              </td>
+              <td>
+                <a href="{% url 'customer_tracker_delete' record.pk %}"
+                   onclick="return confirm('Delete this record?')"
+                   style="color:#ff4d4d;font-size:12px;font-weight:600;">✕</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        {% if records.count > 1 %}
+        
+        <div style="margin-top:16px;background:#1e1e2e;border-radius:10px;padding:14px 16px;">
+          <div style="font-size:12px;color:#888;">
+            📈 {% trans "Tracking since" %} <strong style="color:#a78bfa;">{{ records.last.recorded_on }}</strong>
+            — <strong style="color:#a78bfa;">{{ records.count }} {% trans "entries" %}</strong> {% trans "logged" %}
+          </div>
+        </div>
+        {% endif %}
+
+      {% else %}
+        <div style="text-align:center;padding:40px 20px;">
+          <div style="font-size:48px;margin-bottom:12px;">📊</div>
+          <p style="color:#888;font-size:14px;">
+            {% trans "No records yet. Log your first entry using the form!" %}
+          </p>
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load package_extras %}
+{% block title %}Products — Admin{% endblock %}
+{% block content %}
+<div class="dash-page">
+
+  <div class="dash-top">
+    <div class="dash-welcome">
+      <h1>PRODUCTS</h1>
+      <p>Manage store products</p>
+    </div>
+    <a href="{% url 'admin_product_add' %}" class="btn btn-purple"
+       style="padding:9px 20px;font-size:13px;">+ Add Product</a>
+  </div>
+
+  <div class="d-card">
+    <table class="d-table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for product in products %}
+        <tr>
+          <td>
+            <div style="font-weight:600;color:#e2e8f0;">{{ product.product_name }}</div>
+            <div style="font-size:12px;color:#888;">{{ product.description|truncatewords:8 }}</div>
+          </td>
+          <td style="color:#a78bfa;font-weight:700;">{% convert_price product.price %}</td>
+          <td>
+            <span style="font-size:12px;padding:3px 10px;border-radius:50px;font-weight:600;
+                         background:{% if product.stock == 0 %}#3a1a1a;color:#ff4d4d
+                         {% elif product.stock <= 5 %}#3a2a1a;color:#f59e0b
+                         {% else %}#1a3a2a;color:#22c55e{% endif %};">
+              {{ product.stock }} left
+            </span>
+          </td>
+          <td style="display:flex;gap:12px;">
+            <a href="{% url 'admin_product_edit' product.pk %}"
+               style="color:#a78bfa;font-size:13px;font-weight:600;">Edit</a>
+            <a href="{% url 'admin_product_delete' product.pk %}"
+               onclick="return confirm('Delete this product?')"
+               style="color:#ff4d4d;font-size:13px;font-weight:600;">Delete</a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4" class="d-empty">No products yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+{% endblock %}

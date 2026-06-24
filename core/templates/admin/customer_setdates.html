@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Set Dates — FitnessMaster{% endblock %}
+
+{% block content %}
+<div class="dash-page">
+  <div class="dash-top">
+    <div class="dash-welcome">
+      <h1>SET MEMBERSHIP DATES</h1>
+      <p>Assign package, trainer, and dates for {{ customer.full_name }}.</p>
+    </div>
+    <a href="{% url 'customer_list' %}" class="btn btn-outline" style="padding:9px 20px;font-size:13px;">← Back</a>
+  </div>
+
+  <div class="d-card" style="max-width:600px;margin:0 auto;">
+    {% if messages %}
+      {% for msg in messages %}
+        <div class="alert alert-{{ msg.tags }} mb-3">{{ msg }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label">Assign Package</label>
+        <select name="package" class="form-control">
+          <option value="">-- None --</option>
+          {% for p in packages %}
+            <option value="{{ p.pk }}" {% if customer.assigned_package.pk == p.pk %}selected{% endif %}>
+              {{ p.package_name }} ({{ p.duration }} months — {{ p.price }} INR)
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Assign Trainer</label>
+        <select name="trainer" class="form-control">
+          <option value="">-- None --</option>
+          {% for t in trainers %}
+            <option value="{{ t.pk }}" {% if customer.assigned_trainer.pk == t.pk %}selected{% endif %}>
+              {{ t.full_name }} ({{ t.training_category }})
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Start Date</label>
+        <input type="date" name="start_date" class="form-control" value="{{ customer.start_date|date:'Y-m-d' }}">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">End Date</label>
+        <input type="date" name="end_date" class="form-control" value="{{ customer.end_date|date:'Y-m-d' }}">
+      </div>
+      <button type="submit" class="btn btn-purple w-100">Update Dates</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

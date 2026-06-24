@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% load package_extras %}
+{% block title %}{% trans "My Payments" %} — FitnessMaster{% endblock %}
+
+{% block content %}
+<div class="dash-page">
+
+  
+  <div class="dash-top">
+    <div class="dash-welcome">
+      <h1>{% trans "MY PAYMENTS" %}</h1>
+      <p>{% trans "Secure online payments via Razorpay" %} 💳</p>
+    </div>
+    <a href="{% url 'customer_dashboard' %}" class="btn btn-outline"
+       style="padding:9px 20px;font-size:13px;">← {% trans "Back to Dashboard" %}</a>
+  </div>
+
+  
+  {% if messages %}
+    {% for message in messages %}
+      <div style="padding:14px 20px;border-radius:12px;margin-bottom:20px;font-weight:600;
+                  background:{% if message.tags == 'error' %}#ff4d4d{% else %}#22c55e{% endif %};color:#fff;">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  
+  <div class="stats-grid" style="margin-bottom:28px;">
+    <div class="stat-card sc-purple">
+      <span class="stat-icon">📦</span>
+      <div class="stat-val">{{ customer.assigned_package.package_name|default:"—" }}</div>
+      <div class="stat-lab">{% trans "My Package" %}</div>
+    </div>
+    <div class="stat-card sc-green">
+      <span class="stat-icon">💰</span>
+      <div class="stat-val">{% convert_price customer.assigned_package.price %}</div>
+      <div class="stat-lab">{% trans "Package Price" %}</div>
+    </div>
+    <div class="stat-card sc-blue">
+      <span class="stat-icon">✅</span>
+      <div class="stat-val">{{ currency_symbol }}{{ total_paid }}</div>
+      <div class="stat-lab">{% trans "Total Paid" %}</div>
+    </div>
+    <div class="stat-card {% if amount_due > 0 %}sc-red{% else %}sc-green{% endif %}">
+      <span class="stat-icon">{% if amount_due > 0 %}⚠️{% else %}🎉{% endif %}</span>
+      <div class="stat-val">{{ currency_symbol }}{{ amount_due }}</div>
+      <div class="stat-lab">{% trans "Amount Due" %}</div>
+    </div>
+  </div>
+
+  <div class="dash-grid">
+
+    
+    <div class="d-card">
+      <div class="d-card-title">{% trans "Make a Payment" %}</div>
+
+      {% if not customer.assigned_package %}
+        <p style="color:#888;font-size:14px;margin-top:8px;">
+          {% trans "No package assigned yet. Please contact admin." %}
+        </p>
+
+      {% elif amount_due <= 0 %}
+        <div style="text-align:center;padding:30px 10px;">
+          <div style="font-size:52px;margin-bottom:12px;">🎉</div>
+          <div style="font-size:16px;font-weight:700;color:#22c55e;">{% trans "Package Fully Paid!" %}</div>
+          <p style="color:#888;font-size:13px;margin-top:8px;">
+            {% trans "You have no pending dues for your current package." %}
+          </p>
+        </div>
+
+      {% else %}
+        
+        <div style="background:#1e1e2e;border-radius:12px;padding:20px;margin:16px 0;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+            <span style="color:#888;font-size:14px;">{% trans "Package" %}</span>
+            <span style="color:#e2e8f0;font-weight:600;">
+              {% trans customer.assigned_package.package_name %}
+            </span>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+            <span style="color:#888;font-size:14px;">{% trans "Total Fee" %}</span>
+            <span style="color:#e2e8f0;">{% convert_price customer.assigned_package.price %}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+            <span style="color:#888;font-size:14px;">{% trans "Already Paid" %}</span>
+            <span style="color:#22c55e;">{{ currency_symbol }}{{ total_paid }}</span>
+          </div>
+          <hr style="border:none;border-top:1px solid #2d2d3d;margin:10px 0;">
+          <div style="display:flex;justify-content:space-between;">
+            <span style="font-weight:700;color:#e2e8f0;">{% trans "Amount Due" %}</span>
+            <span style="font-size:20px;font-weight:800;color:#a78bfa;">{{ currency_symbol }}{{ amount_due }}</span>
+          </div>
+        </div>
+
+        
+        <button id="rzp-btn" class="btn btn-purple"
+                style="width:100%;padding:14px;font-size:15px;font-weight:700;
+                       border:none;cursor:pointer;border-radius:10px;margin-top:8px;">
+          💳 {% trans "Pay" %} {{ currency_symbol }}{{ amount_due }} {% trans "Now via Razorpay" %}
+        </button>
+
+        <p style="font-size:12px;color:#888;text-align:center;margin-top:10px;">
+          🔐 {% trans "Secure UPI · Card · Net Banking · Wallet — all supported" %}
+        </p>
+
+        
+        <form id="rzp-form" method="POST" action="{% url 'razorpay_callback' %}">
+          {% csrf_token %}
+          <input type="hidden" name="razorpay_payment_id" id="rzp_payment_id">
+          <input type="hidden" name="razorpay_order_id"   id="rzp_order_id">
+          <input type="hidden" name="razorpay_signature"  id="rzp_signature">
+          <input type="hidden" name="amount"             id="rzp_amount" value="{{ amount_due_inr|stringformat:'.0f' }}00">
+        </form>
+      {% endif %}
+    </div>
+
+    
+    <div class="d-card">
+      <div class="d-card-title">{% trans "Payment History" %}</div>
+      {% if payments %}
+        <table class="d-table" style="margin-top:12px;">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>{% trans "Date" %}</th>
+              <th>{% trans "Method" %}</th>
+              <th>{% trans "Amount" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for payment in payments %}
+            <tr>
+              <td style="color:#888;">{{ forloop.counter }}</td>
+              <td style="font-size:13px;">{{ payment.payment_date }}</td>
+              <td>
+                <span style="background:#2d1f5e;padding:3px 10px;border-radius:50px;
+                             font-size:12px;color:#a78bfa;">
+                  💳 {{ payment.payment_method|default:"—" }}
+                </span>
+              </td>
+              <td style="color:#22c55e;font-weight:700;">{% convert_price payment.amount %}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p class="d-empty">{% trans "No payment records found." %}</p>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  {% if razorpay_order_id %}
+  var options = {
+    key         : '{{ razorpay_key_id }}',
+    amount      : '{{ amount_due_inr|stringformat:".0f" }}' * 100,
+    currency    : 'INR',
+    name        : 'FitnessMaster',
+    description : 'Membership Payment',
+    order_id    : '{{ razorpay_order_id }}',
+    prefill: {
+      name  : '{{ customer.full_name }}',
+      email : '{{ request.user.email }}',
+      contact: '{{ customer.phone_number }}',
+    },
+    display_currency: '{{ currency }}',
+    display_amount: '{{ amount_due }}',
+    theme: { color: '#7c3aed' },
+    handler: function(response) {
+      document.getElementById('rzp_payment_id').value = response.razorpay_payment_id;
+      document.getElementById('rzp_order_id').value   = response.razorpay_order_id;
+      document.getElementById('rzp_signature').value  = response.razorpay_signature;
+      document.getElementById('rzp-form').submit();
+    }
+  };
+
+  var rzp = new Razorpay(options);
+
+  document.getElementById('rzp-btn').onclick = function(e) {
+    rzp.open();
+    e.preventDefault();
+  };
+
+  rzp.on('payment.failed', function(response) {
+    alert('Payment failed: ' + response.error.description);
+  });
+  {% endif %}
+</script>
+{% endblock %}

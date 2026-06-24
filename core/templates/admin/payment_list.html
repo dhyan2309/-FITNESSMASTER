@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load package_extras %}
+{% block title %}Payments — FitnessMaster{% endblock %}
+
+{% block content %}
+<div class="dash-page">
+  <div class="dash-top">
+    <div class="dash-welcome">
+      <h1>ALL PAYMENTS</h1>
+      <p>Total Revenue: <strong style="color:var(--purple);">{% convert_price total_revenue %}</strong></p>
+    </div>
+    <a href="{% url 'admin_dashboard' %}" class="btn btn-outline" style="padding:9px 20px;font-size:13px;">← Dashboard</a>
+  </div>
+
+  <div class="d-card">
+    <div class="d-card-title">Payment Records</div>
+    <div class="table-responsive">
+      <table class="table table-dark table-hover align-middle">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Customer</th>
+            <th>Package</th>
+            <th>Amount</th>
+            <th>Method</th>
+            <th>Date</th>
+            <th>Invoice</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in payments %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ p.customer.full_name }}</td>
+            <td>{{ p.customer.assigned_package.package_name|default:"—" }}</td>
+            <td>{% convert_price p.amount %}</td>
+            <td>{{ p.payment_method|default:"—" }}</td>
+            <td>{{ p.payment_date }}</td>
+            <td>
+              <a href="{% url 'admin_invoice_generate' customer_pk=p.customer.pk %}"
+                 class="btn btn-sm btn-outline">🧾 Generate</a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="7" class="d-empty">No payments recorded yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

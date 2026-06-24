@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% block title %}{% trans "Notices" %} — FitnessMaster{% endblock %}
+
+{% block content %}
+<div class="dash-page">
+
+  
+  <div class="dash-top">
+    <div class="dash-welcome">
+      <h1>{% trans "NOTICES" %}</h1>
+      <p>{% trans "Important announcements from FitnessMaster" %} 📢</p>
+    </div>
+    <a href="{% url 'customer_dashboard' %}" class="btn btn-outline"
+       style="padding:9px 20px;font-size:13px;">
+      ← {% trans "Back to Dashboard" %}
+    </a>
+  </div>
+
+  {% if notices %}
+
+    
+    <div style="margin-bottom:24px;">
+      <span style="background:#2d1f5e;color:#a78bfa;padding:6px 18px;
+                   border-radius:50px;font-size:13px;font-weight:700;">
+        📢 {{ notices.count }} {% trans "Notice" %}{{ notices.count|pluralize }}
+      </span>
+    </div>
+
+    
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      {% for notice in notices %}
+      <div class="d-card" style="border-left: 4px solid
+        {% if notice.sent_to == 'all' %}#7c3aed
+        {% else %}#22c55e{% endif %};">
+
+        
+        <div style="display:flex;align-items:center;justify-content:space-between;
+                    flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="width:40px;height:40px;border-radius:10px;
+                        background:{% if notice.sent_to == 'all' %}#2d1f5e{% else %}#1a3a2a{% endif %};
+                        display:flex;align-items:center;justify-content:center;font-size:20px;">
+              {% if notice.sent_to == 'all' %}📢{% else %}👤{% endif %}
+            </div>
+            <div>
+              <div style="font-weight:700;font-size:16px;color:#e2e8f0;">
+                {{ notice.title }}
+              </div>
+              <div style="font-size:11px;color:#888;margin-top:2px;">
+                {% trans "From" %}: {% trans "FitnessMaster Admin" %}
+              </div>
+            </div>
+          </div>
+
+          
+          <span style="font-size:11px;font-weight:700;letter-spacing:1px;
+                       padding:4px 14px;border-radius:50px;text-transform:uppercase;
+                       background:{% if notice.sent_to == 'all' %}#2d1f5e{% else %}#1a3a2a{% endif %};
+                       color:{% if notice.sent_to == 'all' %}#a78bfa{% else %}#22c55e{% endif %};">
+            {% if notice.sent_to == 'all' %}{% trans "🌐 All Members" %}{% else %}{% trans "👤 Customers" %}{% endif %}
+          </span>
+
+        </div>
+
+        
+        <p style="font-size:14px;color:#cbd5e1;line-height:1.8;
+                  margin:0;white-space:pre-line;">{{ notice.message }}</p>
+
+      </div>
+      {% endfor %}
+    </div>
+
+  {% else %}
+
+    
+    <div class="d-card" style="text-align:center;padding:60px 20px;">
+      <div style="font-size:64px;margin-bottom:16px;">📭</div>
+      <h2 style="color:#e2e8f0;margin-bottom:10px;">{% trans "No Notices Yet" %}</h2>
+      <p style="color:#888;max-width:400px;margin:0 auto;">
+        {% trans "The admin hasn't posted any notices yet. Check back later for announcements and updates." %}
+      </p>
+      <a href="{% url 'customer_dashboard' %}" class="btn btn-purple"
+         style="display:inline-block;margin-top:24px;padding:10px 28px;">
+        ← {% trans "Back to Dashboard" %}
+      </a>
+    </div>
+
+  {% endif %}
+
+</div>
+{% endblock %}

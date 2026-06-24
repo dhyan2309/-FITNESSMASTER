@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Trainers — FitnessMaster{% endblock %}
+
+{% block content %}
+<div class="dash-page">
+
+  <!-- Top Bar -->
+  <div class="dash-top">
+    <div class="dash-welcome">
+      <h1>TRAINERS</h1>
+      <p>Manage all trainers</p>
+    </div>
+    <div style="display:flex;gap:12px;align-items:center;">
+      <a href="{% url 'admin_dashboard' %}" class="dash-logout">← Dashboard</a>
+      <a href="{% url 'trainer_add' %}" class="btn btn-purple">+ Add Trainer</a>
+    </div>
+  </div>
+
+  <!-- Messages -->
+  {% if messages %}
+    {% for msg in messages %}
+      <div class="dash-msg">{{ msg }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- Table -->
+  <div class="d-card">
+    <table class="d-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Full Name</th>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Category</th>
+          <th>Specialization</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for trainer in trainers %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td style="font-weight:600;color:var(--white);">
+            {{ trainer.full_name }}
+          </td>
+          <td>{{ trainer.user.username }}</td>
+          <td>{{ trainer.user.email }}</td>
+          <td>
+            {% if trainer.training_category == 'Gym' %}
+              <span class="db-badge db-gym">Gym</span>
+            {% elif trainer.training_category == 'Yoga' %}
+              <span class="db-badge db-yoga">Yoga</span>
+            {% else %}
+              <span class="db-badge db-zumba">Zumba</span>
+            {% endif %}
+          </td>
+          <td>{{ trainer.specialization|default:"—" }}</td>
+          <td>
+            <div style="display:flex;gap:8px;">
+              <a href="{% url 'trainer_edit' trainer.pk %}"
+                 class="tbl-btn tbl-edit">Edit</a>
+              <a href="{% url 'trainer_delete' trainer.pk %}"
+                 class="tbl-btn tbl-del"
+                 onclick="return confirm('Delete this trainer? This cannot be undone.')">
+                Delete
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" class="d-empty">
+            No trainers yet. Click + Add Trainer to add one.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% block title %}{% trans "My Profile" %} — FitnessMaster{% endblock %}
+
+{% block content %}
+<div class="dash-page">
+
+  
+  <div class="dash-top">
+    <div class="dash-welcome">
+      <h1>{% trans "MY PROFILE" %}</h1>
+      <p>{% trans "Manage your personal information" %} 👤</p>
+    </div>
+    <a href="{% url 'customer_dashboard' %}" class="btn btn-outline" style="padding:9px 20px;font-size:13px;">
+      ← {% trans "Back to Dashboard" %}
+    </a>
+  </div>
+
+  
+  {% if messages %}
+    {% for message in messages %}
+      <div style="padding:14px 20px;border-radius:12px;margin-bottom:20px;font-weight:600;
+                  background:{% if message.tags == 'error' %}#ff4d4d{% else %}#22c55e{% endif %};color:#fff;">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <div class="dash-grid">
+
+    
+    <div style="display:flex;flex-direction:column;gap:20px;">
+
+      
+      <div class="d-card" style="text-align:center;padding:36px 20px;">
+        <div style="width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#a78bfa);
+                    display:flex;align-items:center;justify-content:center;
+                    font-size:38px;font-weight:800;color:#fff;margin:0 auto 16px;">
+          {{ customer.full_name|first|upper }}
+        </div>
+        <div style="font-size:20px;font-weight:700;color:#e2e8f0;">{{ customer.full_name }}</div>
+        <div style="font-size:13px;color:#a78bfa;margin-top:4px;">
+          💪 {% trans "Member" %}
+        </div>
+        <div style="font-size:12px;color:#888;margin-top:4px;">
+          @{{ request.user.username }}
+        </div>
+      </div>
+
+      
+      <div class="d-card">
+        <div class="d-card-title">{% trans "Membership Info" %}</div>
+        <div style="font-size:11px;color:#888;margin-bottom:12px;">
+          {% trans "These are managed by admin only." %}
+        </div>
+        <table class="d-table">
+          <tr>
+            <td style="color:#888;">{% trans "Package" %}</td>
+            <td>{% trans customer.assigned_package.package_name|default:"Not assigned" %}</td>
+          </tr>
+          <tr>
+            <td style="color:#888;">{% trans "Trainer" %}</td>
+            <td>{{ customer.assigned_trainer.full_name|default:"Not assigned" }}</td>
+          </tr>
+          <tr>
+            <td style="color:#888;">{% trans "Start Date" %}</td>
+            <td>{{ customer.start_date|default:"—" }}</td>
+          </tr>
+          <tr>
+            <td style="color:#888;">{% trans "End Date" %}</td>
+            <td>{{ customer.end_date|default:"—" }}</td>
+          </tr>
+        </table>
+      </div>
+
+    </div>
+
+   
+    <div class="d-card">
+      <div class="d-card-title">{% trans "Edit Personal Details" %}</div>
+
+      <form method="POST" style="display:flex;flex-direction:column;gap:18px;margin-top:8px;">
+        {% csrf_token %}
+
+        
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#888;letter-spacing:1px;
+                        text-transform:uppercase;display:block;margin-bottom:6px;">{% trans "Full Name" %} *</label>
+          <input type="text" name="full_name" value="{{ customer.full_name }}" required
+                 style="width:100%;background:#1e1e2e;border:1px solid #2d2d3d;border-radius:10px;
+                        padding:12px 16px;color:#e2e8f0;font-size:14px;outline:none;box-sizing:border-box;">
+        </div>
+
+        
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#888;letter-spacing:1px;
+                        text-transform:uppercase;display:block;margin-bottom:6px;">{% trans "Email (cannot be changed)" %}</label>
+          <input type="email" value="{{ request.user.email }}" disabled
+                 style="width:100%;background:#111;border:1px solid #2d2d3d;border-radius:10px;
+                        padding:12px 16px;color:#555;font-size:14px;box-sizing:border-box;cursor:not-allowed;">
+        </div>
+
+        
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#888;letter-spacing:1px;
+                        text-transform:uppercase;display:block;margin-bottom:6px;">{% trans "Phone Number" %}</label>
+          <input type="text" name="phone_number" value="{{ profile.phone_number }}" maxlength="10"
+                 style="width:100%;background:#1e1e2e;border:1px solid #2d2d3d;border-radius:10px;
+                        padding:12px 16px;color:#e2e8f0;font-size:14px;outline:none;box-sizing:border-box;">
+        </div>
+
+       
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#888;letter-spacing:1px;
+                        text-transform:uppercase;display:block;margin-bottom:6px;">{% trans "Date of Birth" %}</label>
+          <input type="date" name="date_of_birth"
+                 value="{{ customer.date_of_birth|date:'Y-m-d'|default:'' }}"
+                 style="width:100%;background:#1e1e2e;border:1px solid #2d2d3d;border-radius:10px;
+                        padding:12px 16px;color:#e2e8f0;font-size:14px;outline:none;box-sizing:border-box;">
+        </div>
+
+        
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#888;letter-spacing:1px;
+                        text-transform:uppercase;display:block;margin-bottom:6px;">{% trans "Gender" %}</label>
+          <select name="gender"
+                  style="width:100%;background:#1e1e2e;border:1px solid #2d2d3d;border-radius:10px;
+                         padding:12px 16px;color:#e2e8f0;font-size:14px;outline:none;box-sizing:border-box;">
+            <option value="" {% if not customer.gender %}selected{% endif %}>{% trans "Prefer not to say" %}</option>
+            <option value="Male"   {% if customer.gender == 'Male' %}selected{% endif %}>{% trans "Male" %}</option>
+            <option value="Female" {% if customer.gender == 'Female' %}selected{% endif %}>{% trans "Female" %}</option>
+            <option value="Other"  {% if customer.gender == 'Other' %}selected{% endif %}>{% trans "Other" %}</option>
+          </select>
+        </div>
+
+        
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#888;letter-spacing:1px;
+                        text-transform:uppercase;display:block;margin-bottom:6px;">{% trans "Address" %}</label>
+          <textarea name="address" rows="3"
+                    style="width:100%;background:#1e1e2e;border:1px solid #2d2d3d;border-radius:10px;
+                           padding:12px 16px;color:#e2e8f0;font-size:14px;outline:none;
+                           resize:vertical;box-sizing:border-box;">{{ customer.address }}</textarea>
+        </div>
+
+        
+        <button type="submit" class="btn btn-purple"
+                style="padding:13px;font-size:14px;font-weight:700;border:none;cursor:pointer;border-radius:10px;">
+          💾 {% trans "Save Changes" %}
+        </button>
+
+      </form>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

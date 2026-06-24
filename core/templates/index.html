@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% load package_extras %}
+
+{% block title %}{% trans "Train. Track. Transform." %}{% endblock %}
+
+{% block content %}
+
+<!-- ═══════════════════════════════════════════
+     HERO
+═══════════════════════════════════════════ -->
+<section class="hero" id="home">
+  <div class="hero-media" aria-hidden="true">
+    <video class="hero-video" autoplay muted loop playsinline preload="metadata">
+      <source src="{% static 'videos/home-bg.mp4' %}" type="video/mp4">
+    </video>
+    <div class="hero-overlay"></div>
+  </div>
+
+  <div class="container hero-inner">
+    <!-- Left -->
+    <div>
+      <div class="hero-tag">
+        <span class="hero-tag-dot"></span>
+        {% trans "Gym Management Platform" %}
+      </div>
+
+      <h1 class="hero-headline">
+        {% trans "TRAIN." %}<br>
+        {% trans "TRACK." %}<br>
+        <span class="accent">{% trans "TRANSFORM." %}</span>
+      </h1>
+
+      <p class="hero-sub">
+        {% trans "FitnessMaster connects admins, trainers, and members in one powerful platform — with smart packages, personalised plans, and real-time progress tracking." %}
+      </p>
+
+      <div class="hero-btns">
+        <a href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'register' %}{% endif %}" class="btn btn-red btn-lg">{{ t.Get_Started_Free|default:"Get Started Free" }} →</a>
+        <a href="#packages" class="btn btn-outline btn-lg">{{ t.Packages }}</a>
+      </div>
+
+      <div class="hero-stat-block">
+        <div class="hero-stat-title">{% trans "Website Statistics" %}</div>
+        <div class="hero-stats">
+          <div class="stat"><div class="stat-val">1,200+</div><div class="stat-lab">{% trans "Active Members" %}</div></div>
+          <div class="stat"><div class="stat-val">5,000+</div><div class="stat-lab">{% trans "Workouts Logged" %}</div></div>
+          <div class="stat"><div class="stat-val">{% convert_price 50000 %}+</div><div class="stat-lab">{% trans "Revenue Generated" %}</div></div>
+          <div class="stat"><div class="stat-val stat-val-text">{% trans "Strength, Yoga" %}</div><div class="stat-lab">{% trans "Top Categories" %}</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right info cards -->
+    <div class="hero-right">
+      <div class="info-card">
+        <div class="info-icon ic-red">🏋️</div>
+        <div class="info-card-content">
+          <div class="info-card-title">{% trans "Today's Workout" %}</div>
+          <div class="info-card-desc">{% trans "Upper body · 6 exercises · 45 min" %}</div>
+          <div class="progress"><div class="progress-fill pf-red"></div></div>
+        </div>
+        <span class="info-badge badge-red">{% trans "Active" %}</span>
+      </div>
+
+      <div class="info-card">
+        <div class="info-icon ic-grey">🥗</div>
+        <div class="info-card-content">
+          <div class="info-card-title">{% trans "Nutrition Plan" %}</div>
+          <div class="info-card-desc">{% trans "2,400 kcal · High protein · Trainer assigned" %}</div>
+          <div class="progress"><div class="progress-fill pf-mid"></div></div>
+        </div>
+        <span class="info-badge badge-grey">{% trans "Diet" %}</span>
+      </div>
+
+      <div class="info-card">
+        <div class="info-icon ic-red">📈</div>
+        <div class="info-card-content">
+          <div class="info-card-title">{% trans "Monthly Progress" %}</div>
+          <div class="info-card-desc">{% trans "Weight logged · 21-day streak" %} 🔥</div>
+          <div class="progress"><div class="progress-fill pf-hi"></div></div>
+        </div>
+        <span class="info-badge badge-red">{% trans "On Track" %}</span>
+      </div>
+
+      <div class="info-card">
+        <div class="info-icon ic-grey">💳</div>
+        <div class="info-card-content">
+          <div class="info-card-title">{% trans "6-Month Plan Active" %}</div>
+          <div class="info-card-desc">{% trans "Expires Mar 2026 · Invoice ready" %}</div>
+        </div>
+        <span class="info-badge badge-grey">{% trans "Paid" %}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-cue">
+    <span>{% trans "Scroll" %}</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<div style="height: 4px; background: var(--purple); width: 100%;"></div>
+
+
+<!-- ═══════════════════════════════════════════
+     TRAINING CATEGORIES
+═══════════════════════════════════════════ -->
+<section class="section training-section" id="training">
+  <div class="training-media" aria-hidden="true">
+    <video class="training-video" autoplay muted loop playsinline preload="metadata">
+      <source src="{% static 'videos/training-bg.mp4' %}" type="video/mp4">
+    </video>
+    <div class="training-overlay"></div>
+  </div>
+
+  <div class="container">
+    <div class="reveal">
+      <div class="label">{% trans "Disciplines" %}</div>
+      <h2 class="title">{% trans "CHOOSE YOUR" %}<br>{% trans "TRAINING STYLE" %}</h2>
+    </div>
+
+    <div class="cat-layout">
+      <div class="cat-cards">
+        <div class="cat-card cat-gym reveal d1">
+          <span class="cat-emoji">🏋️</span>
+          <div>
+            <div class="cat-title">{% trans "Gym Training" %}</div>
+            <div class="cat-desc">{% trans "Strength, hypertrophy, conditioning. Progressive overload built for real results." %}</div>
+          </div>
+          <div class="cat-num">01</div>
+        </div>
+        <div class="cat-card cat-yoga reveal d2">
+          <span class="cat-emoji">🧘</span>
+          <div>
+            <div class="cat-title">{% trans "Yoga" %}</div>
+            <div class="cat-desc">{% trans "Flexibility, mindfulness, and stress relief with certified instructors." %}</div>
+          </div>
+          <div class="cat-num">02</div>
+        </div>
+        <div class="cat-card cat-zumba reveal d3">
+          <span class="cat-emoji">💃</span>
+          <div>
+            <div class="cat-title">{% trans "Zumba" %}</div>
+            <div class="cat-desc">{% trans "High-energy dance fitness that burns calories and keeps you coming back." %}</div>
+          </div>
+          <div class="cat-num">03</div>
+        </div>
+      </div>
+
+      <div class="cat-panel reveal-right">
+        <div class="sched-head">{% trans "TODAY'S SCHEDULE" %}</div>
+        <div class="sched-sub">{% trans "Live sessions across all disciplines" %}</div>
+        <div class="sched-row"><div class="sched-time">6:00 AM</div><div class="sched-name">{% trans "Morning Strength" %}</div><div class="sched-tag st-gym">{% trans "Gym" %}</div></div>
+        <div class="sched-row"><div class="sched-time">8:00 AM</div><div class="sched-name">{% trans "Sunrise Flow Yoga" %}</div><div class="sched-tag st-yoga">{% trans "Yoga" %}</div></div>
+        <div class="sched-row"><div class="sched-time">10:00 AM</div><div class="sched-name">{% trans "Power Zumba" %}</div><div class="sched-tag st-zumba">{% trans "Zumba" %}</div></div>
+        <div class="sched-row"><div class="sched-time">5:00 PM</div><div class="sched-name">{% trans "Evening Yoga Flow" %}</div><div class="sched-tag st-yoga">{% trans "Yoga" %}</div></div>
+        <div class="sched-row"><div class="sched-time">7:00 PM</div><div class="sched-name">{% trans "Night Zumba Party" %}</div><div class="sched-tag st-zumba">{% trans "Zumba" %}</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+{% load package_extras %}
+
+{% block title %}{% trans "Packages" %} - FitnessMaster{% endblock %}
+
+{% block content %}
+<section class="section packages-bg" id="packages">
+  <div class="packages-media" aria-hidden="true">
+    <video class="packages-video" autoplay muted loop playsinline preload="metadata">
+      <source src="{% static 'videos/packeges-bg.mp4' %}" type="video/mp4">
+      <source src="{% static 'videos/packages-bg.mp4' %}" type="video/mp4">
+    </video>
+    <div class="packages-overlay"></div>
+  </div>
+
+  <div class="container">
+    <div class="pkg-header reveal">
+      <h2 class="title">{% trans "PICK YOUR PLAN" %}</h2>
+      <p class="sub">{% trans "No hidden fees. Review each plan's duration, price, and payment details below." %}</p>
+    </div>
+
+    <div class="pkg-grid">
+      {% for pkg in packages %}
+        <div class="pkg-card reveal {% if forloop.counter == 2 %}featured{% endif %}">
+          <div class="pkg-duration">{{ pkg.duration }} {% trans "Month" %}{{ pkg.duration|pluralize }} - {{ pkg.package_name }}</div>
+          <div class="pkg-price">{% convert_price pkg.price %}</div>
+          <div class="pkg-per">{% trans "one-time payment" %}</div>
+          <div class="pkg-meta">
+            <div class="pkg-meta-item">
+              <span class="pkg-meta-label">{% trans "Plan" %}</span>
+              <span class="pkg-meta-value">{{ pkg.package_name }}</span>
+            </div>
+            <div class="pkg-meta-item">
+              <span class="pkg-meta-label">{% trans "Duration" %}</span>
+              <span class="pkg-meta-value">{{ pkg.duration }} {% trans "Month" %}{{ pkg.duration|pluralize }}</span>
+            </div>
+          </div>
+          <div class="pkg-divider"></div>
+          <div class="pkg-detail-label">{% trans "Plan Details" %}</div>
+          <ul class="pkg-detail-list">
+            {% for feature in pkg.description|package_features %}
+              <li>
+                <span class="pkg-detail-check" aria-hidden="true">&#10003;</span>
+                <span>{{ feature }}</span>
+              </li>
+            {% endfor %}
+          </ul>
+          <a href="{% url 'package_payment_choice' pkg.pk %}"
+             class="btn btn-outline"
+             style="width:100%;justify-content:center;margin-top:auto;">
+            {% trans "Get Started" %}
+          </a>
+        </div>
+      {% empty %}
+        <p style="color:#aaa;text-align:center;">{% trans "No packages available yet." %}</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

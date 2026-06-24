@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% load package_extras %}
+{% block title %}{% trans "My Dashboard" %} — FitnessMaster{% endblock %}
+
+{% block content %}
+<div class="dash-page">
+
+  
+  <div class="dash-top">
+    <div class="dash-welcome">
+      <h1>{% trans "MY DASHBOARD" %}</h1>
+      <p>{% trans "Welcome back" %}, {{ customer.full_name }} 💪</p>
+    </div>
+  </div>
+
+  
+  {% if customer.assigned_package %}
+    {% if days_remaining == 0 %}
+      <div style="background:#ff4d4d;color:#fff;padding:14px 20px;border-radius:12px;margin-bottom:24px;font-weight:600;">
+        ⚠️ {% trans "Your membership has expired. Please contact the admin to renew." %}
+      </div>
+    {% elif days_remaining <= 7 %}
+      <div style="background:#f59e0b;color:#fff;padding:14px 20px;border-radius:12px;margin-bottom:24px;font-weight:600;">
+        ⏰ {% trans "Your membership expires in" %} {{ days_remaining }} {% trans "day" %}{{ days_remaining|pluralize }}. {% trans "Renew soon!" %}
+      </div>
+    {% endif %}
+  {% else %}
+    <div style="background:#7c3aed;color:#fff;padding:14px 20px;border-radius:12px;margin-bottom:24px;font-weight:600;">
+      📦 {% trans "No package assigned yet. Please contact admin to get started." %}
+    </div>
+  {% endif %}
+
+  
+  <div class="stats-grid">
+    <div class="stat-card sc-purple">
+      <span class="stat-icon">📦</span>
+      <div class="stat-val">{{ customer.assigned_package.package_name|default:"—" }}</div>
+      <div class="stat-lab">{% trans "My Package" %}</div>
+    </div>
+    <div class="stat-card sc-green">
+      <span class="stat-icon">⏳</span>
+      <div class="stat-val">{{ days_remaining|default:"—" }}</div>
+      <div class="stat-lab">{% trans "Days Remaining" %}</div>
+    </div>
+    <div class="stat-card sc-blue">
+      <span class="stat-icon">🥗</span>
+      <div class="stat-val">{{ diet_count }}</div>
+      <div class="stat-lab">{% trans "Diet Plans" %}</div>
+    </div>
+    <div class="stat-card sc-amber">
+      <span class="stat-icon">🏋️</span>
+      <div class="stat-val">{{ exercise_count }}</div>
+      <div class="stat-lab">{% trans "Exercise Plans" %}</div>
+    </div>
+  </div>
+
+ 
+  {% if customer.start_date and customer.end_date %}
+  <div class="d-card" style="margin-bottom:24px;">
+    <div class="d-card-title">{% trans "Membership Progress" %}</div>
+    <div style="display:flex;justify-content:space-between;font-size:13px;color:#888;margin-bottom:8px;">
+      <span>{% trans "Start" %}: {{ customer.start_date }}</span>
+      <span>{% trans "End" %}: {{ customer.end_date }}</span>
+    </div>
+    <div style="background:#1e1e2e;border-radius:50px;height:14px;overflow:hidden;">
+      <div style="width:{{ progress_percent }}%;background:linear-gradient(90deg,#7c3aed,#a78bfa);height:100%;border-radius:50px;transition:width 0.5s;"></div>
+    </div>
+    <div style="text-align:right;font-size:12px;color:#888;margin-top:6px;">{{ progress_percent }}% {% trans "used" %}</div>
+  </div>
+  {% endif %}
+
+  
+  <div class="dash-grid">
+
+    
+    <div class="d-card">
+      <div class="d-card-title">{% trans "My Trainer" %}</div>
+      {% if customer.assigned_trainer %}
+        <div style="display:flex;align-items:center;gap:16px;padding:10px 0;">
+          <span class="client-avatar" style="width:52px;height:52px;font-size:22px;">
+            {{ customer.assigned_trainer.full_name|first }}
+          </span>
+          <div>
+            <div style="font-weight:700;font-size:16px;color:#e2e8f0;">{{ customer.assigned_trainer.full_name }}</div>
+            <div style="font-size:13px;color:#a78bfa;margin-top:3px;">
+              {% if customer.assigned_trainer.training_category == 'Gym' %}🏋️
+              {% elif customer.assigned_trainer.training_category == 'Yoga' %}🧘
+              {% else %}💃{% endif %}
+              {% trans customer.assigned_trainer.training_category %} {% trans "Trainer" %}
+            </div>
+            {% if customer.assigned_trainer.specialization %}
+              <div style="font-size:12px;color:#888;margin-top:2px;">{{ customer.assigned_trainer.specialization }}</div>
+            {% endif %}
+          </div>
+        </div>
+      {% else %}
+        <p class="d-empty">{% trans "No trainer assigned yet." %}</p>
+      {% endif %}
+
+      <div class="d-card-title" style="margin-top:20px;">{% trans "Package Details" %}</div>
+      {% if customer.assigned_package %}
+        <table class="d-table">
+          <tr><td style="color:#888;">{% trans "Package" %}</td><td>{{ customer.assigned_package.package_name }}</td></tr>
+          <tr><td style="color:#888;">{% trans "Duration" %}</td><td>{{ customer.assigned_package.duration }} {% trans "months" %}</td></tr>
+          <tr><td style="color:#888;">{% trans "Price" %}</td><td>{% convert_price customer.assigned_package.price %}</td></tr>
+          <tr><td style="color:#888;">{% trans "Start Date" %}</td><td>{{ customer.start_date|default:"Not set" }}</td></tr>
+          <tr><td style="color:#888;">{% trans "End Date" %}</td><td>{{ customer.end_date|default:"Not set" }}</td></tr>
+        </table>
+      {% else %}
+        <p class="d-empty">{% trans "No package assigned yet." %}</p>
+      {% endif %}
+    </div>
+
+   
+    <div class="dash-col">
+
+      
+      <div class="d-card">
+        <div class="d-card-title">
+          {% trans "Latest Diet Plan" %}
+          <a href="#">{% trans "View All" %} →</a>
+        </div>
+        {% if latest_diet %}
+          <div style="font-size:13px;color:#a78bfa;margin-bottom:6px;">🔥 {{ latest_diet.calories }} kcal/day</div>
+          <p style="font-size:14px;color:#cbd5e1;line-height:1.6;">{{ latest_diet.description|truncatewords:30 }}</p>
+        {% else %}
+          <p class="d-empty">{% trans "No diet plan assigned yet." %}</p>
+        {% endif %}
+      </div>
+
+      
+      <div class="d-card">
+        <div class="d-card-title">
+          {% trans "Latest Exercise Plan" %}
+          <a href="#">{% trans "View All" %} →</a>
+        </div>
+        {% if latest_exercise %}
+          <div style="font-size:13px;color:#a78bfa;margin-bottom:6px;">🏷️ {{ latest_exercise.title }}</div>
+          <p style="font-size:14px;color:#cbd5e1;line-height:1.6;">{{ latest_exercise.exercises|truncatewords:25 }}</p>
+        {% else %}
+          <p class="d-empty">{% trans "No exercise plan assigned yet." %}</p>
+        {% endif %}
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="d-card">
+        <div class="d-card-title">{% trans "Quick Actions" %}</div>
+        <div class="quick-grid">
+          <a href="{% url "customer_diet_plan" %}" class="quick-btn">🥗 {% trans "Diet Plan" %}</a>
+          <a href="{% url "customer_exercise_plan" %}" class="quick-btn">🏋️ {% trans "Exercises" %}</a>
+          <a href="{% url "customer_profile" %}" class="quick-btn">👤 {% trans "Profile" %}</a>
+          <a href="{% url 'customer_store' %}" class="quick-btn">🛒 {% trans "Store" %}</a>
+          <a href="{% url 'customer_my_orders' %}" class="quick-btn">📦 {% trans "My Orders" %}</a>
+          <a href="{% url 'customer_invoices' %}" class="quick-btn">🧾 {% trans "Invoices" %}</a>
+          <a href="{% url "customer_payment" %}" class="quick-btn">💳 {% trans "Payments" %}</a>
+          <a href="{% url 'customer_feedback' %}" class="quick-btn">⭐ {% trans "Feedback" %}</a>
+          <a href="{% url 'customer_notices' %}" class="quick-btn">📢 {% trans "Notices" %}</a>
+          <a href="{% url 'customer_tracker' %}" class="quick-btn">📊 {% trans "Tracker" %}</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+{% endblock %}

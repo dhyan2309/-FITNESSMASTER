@@ -1,0 +1,3 @@
+# Django translation file for hi
+# (generated/managed manually for this task)
+

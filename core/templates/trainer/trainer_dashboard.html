@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Trainer Dashboard — FitnessMaster{% endblock %}
+
+{% block content %}
+<div class="dash-page">
+
+  
+  <div class="dash-top">
+    <div class="dash-welcome">
+      <h1>TRAINER DASHBOARD</h1>
+      <p>Welcome back, {{ trainer.full_name }} 👋</p>
+    </div>
+    
+  </div>
+
+  
+  <div style="margin-bottom:28px;">
+    <span class="trainer-category-badge">
+      <span class="trainer-category-dot"></span>
+      {% if trainer.training_category == 'Gym' %}🏋️{% elif trainer.training_category == 'Yoga' %}🧘{% else %}💃{% endif %}
+      {{ trainer.training_category }} Trainer
+    </span>
+  </div>
+
+  
+  <div class="trainer-stats-grid">
+    <div class="stat-card sc-purple">
+      <span class="stat-icon">👥</span>
+      <div class="stat-val">{{ total_clients }}</div>
+      <div class="stat-lab">My Clients</div>
+    </div>
+    <div class="stat-card sc-green">
+      <span class="stat-icon">🥗</span>
+      <div class="stat-val">{{ total_diet_plans }}</div>
+      <div class="stat-lab">Diet Plans</div>
+    </div>
+    <div class="stat-card sc-blue">
+      <span class="stat-icon">🏋️</span>
+      <div class="stat-val">{{ total_exercise_plans }}</div>
+      <div class="stat-lab">Exercise Plans</div>
+    </div>
+  </div>
+
+  
+  <div class="dash-grid">
+
+    
+    <div class="d-card">
+      <div class="d-card-title">
+        My Clients
+        <a href="{% url 'trainer_customer' %}">View All →</a>
+      </div>
+      <table class="d-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Package</th>
+            <th>Expires</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for client in my_clients %}
+          <tr>
+            <td>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span class="client-avatar">{{ client.full_name|first }}</span>
+                {{ client.full_name }}
+              </div>
+            </td>
+            <td>{{ client.assigned_package.package_name|default:"—" }}</td>
+            <td class="exp-date">{{ client.end_date|default:"—" }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="3" class="d-empty">No clients assigned yet</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+   
+    <div class="dash-col">
+
+      
+      <div class="d-card">
+        <div class="d-card-title">
+          Recent Diet Plans
+          <a href="{% url 'trainer_diet_plans' %}">View All →</a>
+        </div>
+        <table class="d-table">
+          <thead>
+            <tr>
+              <th>Client</th>
+              <th>Calories</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for plan in recent_diet_plans %}
+            <tr>
+              <td>{{ plan.customer.full_name }}</td>
+              <td>{{ plan.calories }} kcal</td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="2" class="d-empty">No diet plans yet</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      
+      <div class="d-card">
+        <div class="d-card-title">Quick Actions</div>
+        <div class="quick-grid">
+          <a href="{% url 'trainer_customer' %}" class="quick-btn">My Clients</a>
+          <a href="{% url 'trainer_diet_add' %}" class="quick-btn">+ Diet Plan</a>
+          <a href="{% url 'trainer_exercise_add' %}" class="quick-btn">+ Exercise Plan</a>
+          <a href="{% url 'trainer_profile' %}" class="quick-btn">My Profile</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+{% endblock %}

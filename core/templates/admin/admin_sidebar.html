@@ -1,0 +1,35 @@
+<aside class="admin-sidebar">
+  <div class="admin-sidebar-top">
+    <a href="{% url 'admin_dashboard' %}" class="admin-brand">
+      <div class="logo-box">FM</div>
+      <div>
+        <div class="admin-brand-title">Admin Panel</div>
+        <div class="admin-brand-sub">FitnessMaster</div>
+      </div>
+    </a>
+    <div class="admin-user-chip">
+      {{ request.user.first_name|default:request.user.username }}
+    </div>
+  </div>
+
+  <div class="admin-sidebar-scroll">
+    {% for section in admin_sidebar_sections %}
+      <div class="admin-nav-section">
+        <div class="admin-nav-title">{{ section.title }}</div>
+        <div class="admin-nav-links">
+          {% for link in section.links %}
+            <a href="{% url link.url_name %}"
+               class="admin-nav-link{% if request.resolver_match.url_name in link.active_names %} active{% endif %}">
+              <span class="admin-nav-icon">{{ link.icon }}</span>
+              <span class="admin-nav-text">{{ link.label }}</span>
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="admin-sidebar-bottom">
+    <a href="{% url 'logout' %}" class="admin-sidebar-logout">Logout</a>
+  </div>
+</aside>

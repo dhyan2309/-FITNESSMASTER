@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Customers — FitnessMaster{% endblock %}
+
+{% block content %}
+<div class="dash-page">
+
+  
+  <div class="dash-top">
+    <div class="dash-welcome">
+      <h1>CUSTOMERS</h1>
+      <p>Manage all members</p>
+    </div>
+    <div style="display:flex;gap:12px;align-items:center;">
+      <a href="{% url 'admin_dashboard' %}" class="dash-logout">← Dashboard</a>
+    </div>
+  </div>
+
+  <!-- Messages -->
+  {% if messages %}
+    {% for msg in messages %}
+      <div class="dash-msg">{{ msg }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- Table -->
+  <div class="d-card">
+    <table class="d-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Full Name</th>
+          <th>Username</th>
+          <th>Package</th>
+          <th>Trainer</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in customers %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td style="font-weight:600;color:var(--white);">
+            {{ c.full_name }}
+          </td>
+          <td>{{ c.user.username }}</td>
+          <td>
+            {% if c.assigned_package %}
+              <span class="db-badge db-gym">
+                {{ c.assigned_package.package_name }}
+              </span>
+            {% else %}
+              <span style="color:var(--grey2);">—</span>
+            {% endif %}
+          </td>
+          <td>{{ c.assigned_trainer.full_name|default:"—" }}</td>
+          <td>{{ c.start_date|default:"—" }}</td>
+          <td>
+            {% if c.end_date %}
+              <span class="exp-date">{{ c.end_date }}</span>
+            {% else %}
+              —
+            {% endif %}
+          </td>
+          <td>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <a href="{% url 'customer_edit' c.pk %}"
+                 class="tbl-btn tbl-edit">Edit</a>
+              <a href="{% url 'customer_setdates' c.pk %}"
+                 class="tbl-btn tbl-date">Dates</a>
+              <a href="{% url 'customer_delete' c.pk %}"
+                 class="tbl-btn tbl-del"
+                 onclick="return confirm('Delete this customer? This cannot be undone.')">
+                Delete
+              </a>
+              <a href="{% url 'admin_invoice_generate' c.pk %}"
+              onclick="return confirm('Generate invoice for {{ c.full_name|escapejs }}?')"
+              style="color:#22c55e;font-size:13px;font-weight:600;">🧾 Invoice</a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="8" class="d-empty">
+            No customers yet. 
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+{% endblock %}

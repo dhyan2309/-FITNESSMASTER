@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}Equipment — Admin{% endblock %}
+{% block content %}
+<div class="dash-page">
+
+  <div class="dash-top">
+    <div class="dash-welcome">
+      <h1>EQUIPMENT</h1>
+      <p>Manage gym equipment inventory</p>
+    </div>
+    <a href="{% url 'equipment_add' %}" class="btn btn-purple"
+       style="padding:9px 20px;font-size:13px;">+ Add Equipment</a>
+  </div>
+
+  <div class="d-card">
+    <table class="d-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Category</th>
+          <th>Qty</th>
+          <th>Status</th>
+          <th>Purchase Date</th>
+          <th>Last Maintenance</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in equipment %}
+        <tr>
+          <td>
+            <div style="font-weight:600;color:#e2e8f0;">{{ item.name }}</div>
+            <div style="font-size:12px;color:#888;">{{ item.description|truncatewords:6 }}</div>
+          </td>
+          <td>{{ item.category }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>
+            <span style="font-size:12px;padding:3px 10px;border-radius:50px;font-weight:600;
+                         background:{% if item.status == 'Working' %}#1a3a2a;color:#22c55e
+                         {% elif item.status == 'Under Maintenance' %}#3a2a1a;color:#f59e0b
+                         {% else %}#3a1a1a;color:#ff4d4d{% endif %};">
+              {{ item.status }}
+            </span>
+          </td>
+          <td>{{ item.purchase_date|default:"—" }}</td>
+          <td>{{ item.last_maintenance|default:"—" }}</td>
+          <td style="display:flex;gap:12px;">
+            <a href="{% url 'equipment_edit' item.pk %}"
+               style="color:#a78bfa;font-size:13px;font-weight:600;">Edit</a>
+            <a href="{% url 'equipment_delete' item.pk %}"
+               onclick="return confirm('Delete this equipment?')"
+               style="color:#ff4d4d;font-size:13px;font-weight:600;">Delete</a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" class="d-empty">No equipment yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+{% endblock %}
+

@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load package_extras %}
+{% block title %}Packages — FitnessMaster{% endblock %}
+
+{% block content %}
+<div class="dash-page">
+
+  
+  <div class="dash-top">
+    <div class="dash-welcome">
+      <h1>PACKAGES</h1>
+      <p>Create and manage membership packages</p>
+    </div>
+    <div style="display:flex;gap:12px;align-items:center;">
+      <a href="{% url 'admin_dashboard' %}" class="dash-logout">← Dashboard</a>
+      <a href="{% url 'package_add' %}" class="btn btn-purple">+ Add Package</a>
+    </div>
+  </div>
+
+  
+  {% if messages %}
+    {% for msg in messages %}
+      <div class="dash-msg">{{ msg }}</div>
+    {% endfor %}
+  {% endif %}
+
+  
+  <div class="d-card">
+    <table class="d-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Package Name</th>
+          <th>Duration</th>
+          <th>Price</th>
+          <th>Description</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for pkg in packages %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td style="font-weight:600;color:var(--white);">{{ pkg.package_name }}</td>
+          <td>
+            <span class="db-badge db-gym">{{ pkg.duration }} Month{{ pkg.duration|pluralize }}</span>
+          </td>
+          <td style="color:#fbbf24;font-weight:600;">{% convert_price pkg.price %}</td>
+          <td>{{ pkg.description|truncatechars:50 }}</td>
+          <td>
+            <div style="display:flex;gap:8px;">
+              <a href="{% url 'package_edit' pkg.pk %}" class="tbl-btn tbl-edit">Edit</a>
+              <a href="{% url 'package_delete' pkg.pk %}"
+                 class="tbl-btn tbl-del"
+                 onclick="return confirm('Are you sure you want to delete this package?')">
+                Delete
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" class="d-empty">No packages yet. Click + Add Package to create one.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+{% endblock %}

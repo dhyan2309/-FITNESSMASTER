@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}Enquiry Detail — Admin{% endblock %}
+{% block content %}
+<div class="dash-page">
+
+  <div class="dash-top">
+    <div class="dash-welcome">
+      <h1>ENQUIRY DETAIL</h1>
+      <p>View and manage enquiry status</p>
+    </div>
+    <a href="{% url 'admin_enquiry_list' %}" class="btn btn-outline"
+       style="padding:9px 20px;font-size:13px;">← Back</a>
+  </div>
+
+  <div class="d-card" style="max-width:700px;">
+    <div style="margin-bottom:18px;">
+      <div style="font-size:12px;font-weight:700;color:#888;letter-spacing:1px;text-transform:uppercase;">From</div>
+      <div style="font-size:18px;font-weight:700;color:#e2e8f0;margin-top:4px;">{{ enquiry.full_name }}</div>
+      <div style="font-size:13px;color:#888;margin-top:2px;">{{ enquiry.email }} &nbsp;|&nbsp; {{ enquiry.phone }}</div>
+
+    <div style="margin-bottom:18px;">
+      <div style="font-size:12px;font-weight:700;color:#888;letter-spacing:1px;text-transform:uppercase;">Date</div>
+      <div style="font-size:14px;color:#cbd5e1;margin-top:4px;">{{ enquiry.created_at|date:"F d, Y H:i" }}</div>
+
+    <div style="margin-bottom:18px;">
+      <div style="font-size:12px;font-weight:700;color:#888;letter-spacing:1px;text-transform:uppercase;">Status</div>
+      <div style="margin-top:8px;">
+        <span style="font-size:13px;padding:5px 14px;border-radius:50px;font-weight:600;
+                     background:{% if enquiry.status == 'New' %}#1a2a3a;color:#60a5fa
+                     {% elif enquiry.status == 'In Progress' %}#3a2a1a;color:#f59e0b
+                     {% else %}#1a3a2a;color:#22c55e{% endif %};">
+          {{ enquiry.status }}
+        </span>
+      </div>
+
+    <div style="margin-bottom:24px;">
+      <div style="font-size:12px;font-weight:700;color:#888;letter-spacing:1px;text-transform:uppercase;">Message</div>
+      <div style="margin-top:8px;padding:14px 16px;background:#1e1e2e;border:1px solid #2d2d3d;border-radius:10px;color:#cbd5e1;font-size:14px;line-height:1.6;">
+        {{ enquiry.message|linebreaksbr }}
+      </div>
+
+    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+      <form method="POST" action="{% url 'admin_enquiry_status_update' enquiry.pk %}"
+            style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        {% csrf_token %}
+        <label style="font-size:12px;font-weight:700;color:#888;letter-spacing:1px;text-transform:uppercase;">Update Status:</label>
+        <select name="status"
+                style="background:#1e1e2e;border:1px solid #2d2d3d;border-radius:8px;padding:8px 12px;color:#e2e8f0;font-size:13px;outline:none;">
+          <option value="New" {% if enquiry.status == 'New' %}selected{% endif %}>New</option>
+          <option value="In Progress" {% if enquiry.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+          <option value="Resolved" {% if enquiry.status == 'Resolved' %}selected{% endif %}>Resolved</option>
+        </select>
+        <button type="submit" class="btn btn-purple" style="padding:8px 18px;font-size:13px;border:none;cursor:pointer;border-radius:8px;">
+          Update
+        </button>
+      </form>
+
+      <a href="{% url 'admin_enquiry_delete' enquiry.pk %}"
+         onclick="return confirm('Delete this enquiry?')"
+         class="btn btn-outline" style="padding:8px 18px;font-size:13px;color:#ff4d4d;border-color:#ff4d4d;">
+        Delete
+      </a>
+    </div>
+
+</div>
+{% endblock %}

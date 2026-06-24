@@ -1,0 +1,76 @@
+<div class="skeleton-loader" aria-hidden="true">
+  <div class="skeleton-shell">
+    <div class="skeleton-top">
+      <div class="skeleton-logo">
+        <span class="skeleton-mark"></span>
+        <span class="skeleton-line skeleton-brand"></span>
+      </div>
+      <div class="skeleton-nav-lines">
+        <span class="skeleton-line"></span>
+        <span class="skeleton-line"></span>
+        <span class="skeleton-line"></span>
+      </div>
+    </div>
+
+    <div class="skeleton-content">
+      <div class="skeleton-hero">
+        <span class="skeleton-line skeleton-kicker"></span>
+        <span class="skeleton-line skeleton-title"></span>
+        <span class="skeleton-line skeleton-title skeleton-title-short"></span>
+        <span class="skeleton-line skeleton-copy"></span>
+        <span class="skeleton-line skeleton-copy skeleton-copy-short"></span>
+        <div class="skeleton-actions">
+          <span class="skeleton-pill"></span>
+          <span class="skeleton-pill skeleton-pill-light"></span>
+        </div>
+      </div>
+      <div class="skeleton-card-grid">
+        <span class="skeleton-card"></span>
+        <span class="skeleton-card"></span>
+        <span class="skeleton-card"></span>
+        <span class="skeleton-card"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const root = document.documentElement;
+    root.classList.add('skeleton-loading');
+
+    const hideSkeleton = function () {
+      window.setTimeout(function () {
+        root.classList.remove('skeleton-loading');
+      }, 250);
+    };
+
+    if (document.readyState === 'complete') {
+      hideSkeleton();
+    } else {
+      window.addEventListener('load', hideSkeleton, { once: true });
+    }
+
+    window.addEventListener('pageshow', hideSkeleton);
+
+    document.addEventListener('click', function (event) {
+      const link = event.target.closest('a[href]');
+      if (!link) return;
+
+      const href = link.getAttribute('href') || '';
+      const isHashOnly = href.charAt(0) === '#';
+      const isNewContext = link.target && link.target !== '_self';
+      const isSkipLink = link.hasAttribute('download') || href.startsWith('mailto:') ||
+        href.startsWith('tel:') || href.startsWith('javascript:');
+
+      if (!isHashOnly && !isNewContext && !isSkipLink) {
+        root.classList.add('skeleton-loading');
+      }
+    });
+
+    document.addEventListener('submit', function (event) {
+      if (event.target.target && event.target.target !== '_self') return;
+      root.classList.add('skeleton-loading');
+    });
+  })();
+</script>

@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load package_extras %}
+{% block title %}{% trans "Invoice" %} {{ invoice.invoice_no }}{% endblock %}
+
+{% block extra_head %}
+<style>
+  @media print {
+    .no-print { display: none !important; }
+    .dash-page { padding: 0 !important; }
+    body { background: white !important; color: black !important; }
+    .invoice-box { box-shadow: none !important; border: 1px solid #ccc !important; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dash-page">
+
+  <div class="dash-top no-print">
+    <div class="dash-welcome">
+      <h1>{% trans "INVOICE" %} {{ invoice.invoice_no }}</h1>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button onclick="window.print()" class="btn btn-purple"
+              style="padding:9px 20px;font-size:13px;border:none;cursor:pointer;">
+        🖨️ {% trans "Print / Save PDF" %}
+      </button>
+      <a href="{% url 'customer_invoices' %}" class="btn btn-outline"
+         style="padding:9px 20px;font-size:13px;">← {% trans "Back" %}</a>
+    </div>
+  </div>
+
+
+  <div class="invoice-box" style="background:#fff;color:#111;border-radius:16px;
+       max-width:720px;margin:0 auto;padding:40px;box-shadow:0 4px 30px rgba(0,0,0,0.3);">
+
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;
+                margin-bottom:32px;flex-wrap:wrap;gap:16px;">
+      <div>
+        <div style="font-size:28px;font-weight:900;color:#7c3aed;letter-spacing:2px;">
+          FITNESSMASTER
+        </div>
+        <div style="font-size:13px;color:#555;margin-top:4px;">{% trans "Your Fitness. Our Commitment." %}</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:22px;font-weight:800;color:#111;">{% trans "INVOICE" %}</div>
+        <div style="font-size:14px;color:#555;margin-top:4px;"># {{ invoice.invoice_no }}</div>
+        <div style="font-size:13px;color:#555;">{% trans "Date" %}: {{ invoice.generated_on }}</div>
+      </div>
+    </div>
+
+    <hr style="border:none;border-top:2px solid #7c3aed;margin-bottom:28px;">
+
+    <div style="margin-bottom:28px;">
+      <div style="font-size:11px;font-weight:700;color:#7c3aed;
+                  letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">{% trans "Bill To" %}</div>
+      <div style="font-size:16px;font-weight:700;color:#111;">{{ customer.full_name }}</div>
+      <div style="font-size:13px;color:#555;margin-top:3px;">{{ customer.user.email }}</div>
+      {% if customer.address %}
+      <div style="font-size:13px;color:#555;margin-top:2px;">{{ customer.address }}</div>
+      {% endif %}
+      {% if customer.assigned_package %}
+      <div style="font-size:13px;color:#555;margin-top:2px;">
+        {% trans "Package" %}: {% trans customer.assigned_package.package_name %}
+      </div>
+      {% endif %}
+    </div>
+
+    <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
+      <thead>
+        <tr style="background:#7c3aed;color:#fff;">
+          <th style="padding:10px 14px;text-align:left;font-size:13px;">{% trans "Description" %}</th>
+          <th style="padding:10px 14px;text-align:right;font-size:13px;">{% trans "Amount" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid #eee;">
+          <td style="padding:12px 14px;font-size:14px;color:#111;">
+            {% trans "Membership Fee" %}
+            {% if customer.assigned_package %}
+              — {% trans customer.assigned_package.package_name %}
+              ({{ customer.assigned_package.duration }} {% trans "months" %})
+            {% endif %}
+          </td>
+          <td style="padding:12px 14px;text-align:right;font-size:14px;font-weight:700;color:#111;">
+            {% convert_price invoice.payment.amount %}
+          </td>
+        </tr>
+        {% for order in orders %}
+        <tr style="border-bottom:1px solid #eee;">
+          <td style="padding:12px 14px;font-size:14px;color:#111;">
+            {{ order.product.product_name }} × {{ order.quantity }}
+          </td>
+          <td style="padding:12px 14px;text-align:right;font-size:14px;font-weight:700;color:#111;">
+            {% convert_price order.total_price %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr style="background:#f3f4f6;">
+          <td style="padding:14px;font-size:15px;font-weight:800;color:#111;">{% trans "TOTAL" %}</td>
+          <td style="padding:14px;text-align:right;font-size:18px;font-weight:900;color:#7c3aed;">
+            {% convert_price invoice.payment.amount %}
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+
+    {% if invoice.payment and invoice.payment.payment_method %}
+    <div style="font-size:13px;color:#555;margin-bottom:20px;">
+      {% trans "Payment Method" %}: <strong>{% trans invoice.payment.payment_method %}</strong>
+    </div>
+    {% endif %}
+
+    <hr style="border:none;border-top:1px solid #eee;margin-bottom:16px;">
+    <div style="text-align:center;font-size:12px;color:#888;">
+      {% trans "Thank you for being a part of FitnessMaster!" %} 💪<br>
+      {% trans "This is a computer-generated invoice." %}
+    </div>
+
+  </div>
+</div>
+{% endblock %}

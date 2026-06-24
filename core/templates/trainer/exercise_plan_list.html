@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Exercise Plans — FitnessMaster{% endblock %}
+
+{% block content %}
+<div class="dash-page">
+
+  
+  <div class="dash-top">
+    <div class="dash-welcome">
+      <h1>EXERCISE PLANS</h1>
+      <p>Manage workout plans for your clients</p>
+    </div>
+    <div style="display:flex;gap:12px;align-items:center;">
+      <a href="{% url 'trainer_exercise_add' %}" class="btn btn-purple" style="padding:10px 22px;font-size:13px;">+ Add Exercise Plan</a>
+      <a href="{% url 'trainer_dashboard' %}" class="dash-logout">← Dashboard</a>
+    </div>
+  </div>
+
+  
+  {% for msg in messages %}
+  <div class="alert-msg alert-{{ msg.tags }}" style="margin-bottom:16px;">{{ msg }}</div>
+  {% endfor %}
+
+  
+  <div class="d-card">
+    <table class="d-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Client</th>
+          <th>Plan Title</th>
+          <th>Category</th>
+          <th>Exercises</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for plan in exercise_plans %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span class="client-avatar">{{ plan.customer.full_name|first }}</span>
+              <div>
+                <div style="font-weight:600;color:var(--white);">{{ plan.customer.full_name }}</div>
+                <div style="font-size:11px;color:var(--grey2);">{{ plan.customer.user.email }}</div>
+              </div>
+            </div>
+          </td>
+          <td style="font-weight:600;color:var(--white);">{{ plan.title }}</td>
+          <td>
+            {% if plan.category %}
+              <span class="db-badge db-gym">{{ plan.category }}</span>
+            {% else %}
+              <span style="color:var(--grey2);">—</span>
+            {% endif %}
+          </td>
+          <td style="max-width:260px;color:var(--grey2);font-size:13px;">
+            {{ plan.exercises|truncatechars:70 }}
+          </td>
+          <td>
+            <div style="display:flex;gap:8px;">
+              <a href="{% url 'trainer_exercise_edit' plan.pk %}" class="tbl-btn tbl-edit">Edit</a>
+              <a href="{% url 'trainer_exercise_delete' plan.pk %}"
+                 class="tbl-btn tbl-del"
+                 onclick="return confirm('Delete this exercise plan?')">Delete</a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" class="d-empty">
+            No exercise plans yet. <a href="{% url 'trainer_exercise_add' %}" style="color:var(--purple);">Add one →</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+{% endblock %}
