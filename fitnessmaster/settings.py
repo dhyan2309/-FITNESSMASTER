@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import dj_database_url
 
 load_dotenv()
 
@@ -86,14 +87,14 @@ WSGI_APPLICATION = 'fitnessmaster.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-
-import dj_database_url
+# Locally uses SQLite. On Railway, set DATABASE_URL env var to your PostgreSQL URL.
+# Railway auto-injects DATABASE_URL when you add the PostgreSQL plugin.
 
 DATABASES = {
     'default': dj_database_url.config(
         default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-        conn_max_age=600
+        conn_max_age=600,
+        conn_health_checks=True,
     )
 }
 
