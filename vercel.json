@@ -1,14 +1,15 @@
 {
+  "version": 2,
   "builds": [
     {
-      "src": "fitnessmaster/asgi.py",
+      "src": "fitnessmaster/wsgi.py",
       "use": "@vercel/python"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "fitnessmaster/asgi.py"
+      "dest": "fitnessmaster/wsgi.py"
     }
   ]
 }
