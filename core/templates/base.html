@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap"
     rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   {% load static %}
   {% load i18n %}
   <link rel="stylesheet" href="{% static 'css/style.css' %}" />
@@ -169,10 +170,10 @@
             <div class="footer-logo-name">FITNESS<span>MASTER</span></div>
             <p class="footer-about">{% trans "The all-in-one gym management platform built for athletes, trainers, and administrators who demand the best." %}</p>
             <div class="socials">
-              <a href="#" class="social-btn">📸</a>
-              <a href="#" class="social-btn" style="font-weight:900;font-size:11px;">𝕏</a>
-              <a href="#" class="social-btn" style="font-size:11px;font-weight:700;">f</a>
-              <a href="#" class="social-btn">▶</a>
+              <a href="https://instagram.com" target="_blank" class="social-btn"><i class="fab fa-instagram"></i></a>
+              <a href="https://x.com" target="_blank" class="social-btn"><i class="fab fa-x-twitter"></i></a>
+              <a href="https://facebook.com" target="_blank" class="social-btn"><i class="fab fa-facebook-f"></i></a>
+              <a href="https://youtube.com" target="_blank" class="social-btn"><i class="fab fa-youtube"></i></a>
             </div>
           </div>
 
@@ -191,10 +192,10 @@
             <div class="footer-head">{% trans "Company" %}</div>
             <ul class="footer-links">
               <li><a href="{% url 'about' %}">{% trans "About Us" %}</a></li>
-              <li><a href="{% url 'index' %}#contact">{% trans "Careers" %}</a></li>
-              <li><a href="{% url 'customer_notices' %}">{% trans "Latest News" %}</a></li>
-              <li><a href="{% url 'about' %}">{% trans "Privacy Policy" %}</a></li>
-              <li><a href="{% url 'about' %}">{% trans "Terms of Use" %}</a></li>
+              <li><a href="#contact">{% trans "Careers" %}</a></li>
+              <li><a href="{% url 'index' %}">{% trans "Platform Home" %}</a></li>
+              <li><a href="{% url 'about' %}#privacy">{% trans "Privacy Policy" %}</a></li>
+              <li><a href="{% url 'about' %}#terms">{% trans "Terms of Use" %}</a></li>
             </ul>
           </div>
 
@@ -216,9 +217,9 @@
       <div class="footer-bottom">
         <p class="footer-copy">© 2025 <b>FitnessMaster</b>. {% trans "All rights reserved." %}</p>
         <div class="footer-legal">
-          <a href="#">{% trans "Privacy" %}</a>
-          <a href="#">{% trans "Terms" %}</a>
-          <a href="#">{% trans "Sitemap" %}</a>
+          <a href="{% url 'about' %}#privacy">{% trans "Privacy" %}</a>
+          <a href="{% url 'about' %}#terms">{% trans "Terms" %}</a>
+          <a href="{% url 'about' %}">{% trans "Sitemap" %}</a>
         </div>
       </div>
     </div>

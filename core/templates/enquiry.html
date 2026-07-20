@@ -1,58 +1,391 @@
 {% extends 'base.html' %}
 {% load i18n %}
 {% block title %}{% trans "Enquiry" %} — FitnessMaster{% endblock %}
+
+{% block extra_head %}
+<style>
+  /* ── Enquiry Page ── */
+  .enquiry-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 120px 20px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .enquiry-page::before {
+    content: '';
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, rgba(124,58,237,0.07) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .enquiry-page::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 50px 50px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent);
+    pointer-events: none;
+  }
+
+  .enquiry-wrap {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 860px;
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+  }
+  .enquiry-wrap::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--purple-dim), var(--purple), var(--purple-lite));
+  }
+
+  /* Left panel */
+  .enquiry-side {
+    background: linear-gradient(160deg, #111 0%, #0d0d0d 100%);
+    padding: 52px 36px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-right: 1px solid var(--border);
+  }
+  .enquiry-side-kicker {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--purple);
+    margin-bottom: 16px;
+  }
+  .enquiry-side-title {
+    font-family: var(--font-d);
+    font-size: 42px;
+    line-height: 1;
+    letter-spacing: 1.5px;
+    color: var(--white);
+    margin-bottom: 14px;
+  }
+  .enquiry-side-desc {
+    font-size: 13px;
+    color: var(--grey2);
+    line-height: 1.8;
+    margin-bottom: 36px;
+  }
+  .enquiry-contacts { display: flex; flex-direction: column; gap: 20px; }
+  .enquiry-contact-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .enquiry-contact-icon {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    background: rgba(124,58,237,0.1);
+    border: 1px solid rgba(124,58,237,0.2);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--purple-lite);
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .enquiry-contact-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--grey2);
+    margin-bottom: 2px;
+  }
+  .enquiry-contact-value {
+    font-size: 13px;
+    color: var(--white);
+    font-weight: 500;
+  }
+
+  .enquiry-side-social {
+    display: flex;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 40px;
+  }
+  .enquiry-social-btn {
+    width: 36px; height: 36px;
+    border-radius: 9px;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--grey2);
+    font-size: 14px;
+    text-decoration: none;
+    transition: all var(--t);
+  }
+  .enquiry-social-btn:hover {
+    background: var(--purple-mid);
+    border-color: var(--purple-mid);
+    color: #fff;
+    transform: translateY(-2px);
+  }
+
+  /* Right form panel */
+  .enquiry-form-panel {
+    padding: 52px 44px;
+  }
+  .enquiry-form-title {
+    font-family: var(--font-d);
+    font-size: 28px;
+    letter-spacing: 1px;
+    color: var(--white);
+    margin-bottom: 6px;
+  }
+  .enquiry-form-sub {
+    font-size: 13px;
+    color: var(--grey2);
+    margin-bottom: 32px;
+  }
+
+  .eq-form-group { margin-bottom: 18px; }
+  .eq-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--grey2);
+    margin-bottom: 8px;
+  }
+  .eq-input-wrap { position: relative; }
+  .eq-input-wrap i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--grey2);
+    font-size: 14px;
+    pointer-events: none;
+  }
+  .eq-input {
+    width: 100%;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 12px 16px 12px 42px;
+    font-size: 14px;
+    color: var(--white);
+    font-family: var(--font-b);
+    outline: none;
+    transition: border-color var(--t), box-shadow var(--t);
+    box-sizing: border-box;
+  }
+  .eq-input::placeholder { color: var(--grey2); opacity: 0.7; }
+  .eq-input:focus {
+    border-color: var(--purple);
+    box-shadow: 0 0 0 3px rgba(124,58,237,0.12);
+  }
+  .eq-textarea {
+    width: 100%;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 14px 16px;
+    font-size: 14px;
+    color: var(--white);
+    font-family: var(--font-b);
+    outline: none;
+    resize: vertical;
+    min-height: 120px;
+    transition: border-color var(--t), box-shadow var(--t);
+    box-sizing: border-box;
+    line-height: 1.6;
+  }
+  .eq-textarea::placeholder { color: var(--grey2); opacity: 0.7; }
+  .eq-textarea:focus {
+    border-color: var(--purple);
+    box-shadow: 0 0 0 3px rgba(124,58,237,0.12);
+  }
+  .eq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .eq-submit {
+    width: 100%;
+    background: var(--purple);
+    color: #fff;
+    border: none;
+    border-radius: var(--r);
+    padding: 14px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: var(--font-b);
+    letter-spacing: 1px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all var(--t);
+    margin-top: 8px;
+  }
+  .eq-submit:hover {
+    background: var(--purple-dim);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(124,58,237,0.35);
+  }
+  .eq-submit i { font-size: 13px; }
+
+  .eq-msg-success {
+    background: rgba(16,185,129,0.1);
+    border: 1px solid rgba(16,185,129,0.25);
+    color: #34d399;
+    border-radius: var(--r);
+    padding: 14px 18px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .eq-msg-error {
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.25);
+    color: #fca5a5;
+    border-radius: var(--r);
+    padding: 14px 18px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  @media (max-width: 760px) {
+    .enquiry-wrap { grid-template-columns: 1fr; }
+    .enquiry-side { border-right: 0; border-bottom: 1px solid var(--border); padding: 36px 28px; }
+    .enquiry-form-panel { padding: 36px 28px; }
+    .eq-grid { grid-template-columns: 1fr; }
+    .enquiry-side-title { font-size: 32px; }
+  }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="dash-page" style="max-width:600px;margin:0 auto;padding-top:40px;">
+<section class="enquiry-page">
+  <div class="enquiry-wrap reveal">
 
-  <div class="dash-welcome" style="text-align:center;margin-bottom:28px;">
-    <h1>{% trans "GET IN TOUCH" %}</h1>
-    <p style="color:#888;">{% trans "Have a question? Send us an enquiry and we'll get back to you." %}</p>
-  </div>
+    <!-- Left sidebar info -->
+    <div class="enquiry-side">
+      <p class="enquiry-side-kicker">{% trans "Contact Us" %}</p>
+      <h1 class="enquiry-side-title">{% trans "GET IN TOUCH" %}</h1>
+      <p class="enquiry-side-desc">{% trans "Have a question about memberships, training, or anything else? We respond within 24 hours." %}</p>
 
-  <div class="d-card">
-    <form method="POST" style="display:flex;flex-direction:column;gap:18px;">
-      {% csrf_token %}
-
-      <div>
-        <label style="font-size:12px;font-weight:700;color:#888;letter-spacing:1px;
-                      text-transform:uppercase;display:block;margin-bottom:6px;">{% trans "Full Name" %} *</label>
-        <input type="text" name="full_name" required
-               style="width:100%;background:#1e1e2e;border:1px solid #2d2d3d;border-radius:10px;
-                      padding:12px 16px;color:#e2e8f0;font-size:14px;outline:none;box-sizing:border-box;">
-      </div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-        <div>
-          <label style="font-size:12px;font-weight:700;color:#888;letter-spacing:1px;
-                        text-transform:uppercase;display:block;margin-bottom:6px;">{% trans "Email" %} *</label>
-          <input type="email" name="email" required
-                 style="width:100%;background:#1e1e2e;border:1px solid #2d2d3d;border-radius:10px;
-                        padding:12px 16px;color:#e2e8f0;font-size:14px;outline:none;box-sizing:border-box;">
+      <div class="enquiry-contacts">
+        <div class="enquiry-contact-item">
+          <div class="enquiry-contact-icon"><i class="fas fa-location-dot"></i></div>
+          <div>
+            <div class="enquiry-contact-label">{% trans "Location" %}</div>
+            <div class="enquiry-contact-value">123 Fitness Ave, Mumbai 400001</div>
+          </div>
         </div>
-        <div>
-          <label style="font-size:12px;font-weight:700;color:#888;letter-spacing:1px;
-                        text-transform:uppercase;display:block;margin-bottom:6px;">{% trans "Phone" %} *</label>
-          <input type="text" name="phone" required
-                 style="width:100%;background:#1e1e2e;border:1px solid #2d2d3d;border-radius:10px;
-                        padding:12px 16px;color:#e2e8f0;font-size:14px;outline:none;box-sizing:border-box;">
+        <div class="enquiry-contact-item">
+          <div class="enquiry-contact-icon"><i class="fas fa-phone"></i></div>
+          <div>
+            <div class="enquiry-contact-label">{% trans "Phone" %}</div>
+            <div class="enquiry-contact-value">+91 6352324371</div>
+          </div>
+        </div>
+        <div class="enquiry-contact-item">
+          <div class="enquiry-contact-icon"><i class="fas fa-envelope"></i></div>
+          <div>
+            <div class="enquiry-contact-label">{% trans "Email" %}</div>
+            <div class="enquiry-contact-value">dhyan0723@gmail.com</div>
+          </div>
+        </div>
+        <div class="enquiry-contact-item">
+          <div class="enquiry-contact-icon"><i class="fas fa-clock"></i></div>
+          <div>
+            <div class="enquiry-contact-label">{% trans "Hours" %}</div>
+            <div class="enquiry-contact-value">Mon–Sat: 5 AM – 10 PM</div>
+          </div>
         </div>
       </div>
 
-      <div>
-        <label style="font-size:12px;font-weight:700;color:#888;letter-spacing:1px;
-                      text-transform:uppercase;display:block;margin-bottom:6px;">{% trans "Message" %} *</label>
-        <textarea name="message" rows="4" required
-                  style="width:100%;background:#1e1e2e;border:1px solid #2d2d3d;border-radius:10px;
-                         padding:12px 16px;color:#e2e8f0;font-size:14px;outline:none;
-                         resize:vertical;box-sizing:border-box;"></textarea>
+      <div class="enquiry-side-social">
+        <a href="https://instagram.com" target="_blank" class="enquiry-social-btn"><i class="fab fa-instagram"></i></a>
+        <a href="https://x.com" target="_blank" class="enquiry-social-btn"><i class="fab fa-x-twitter"></i></a>
+        <a href="https://facebook.com" target="_blank" class="enquiry-social-btn"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://youtube.com" target="_blank" class="enquiry-social-btn"><i class="fab fa-youtube"></i></a>
       </div>
+    </div>
 
-      <button type="submit" class="btn btn-purple"
-              style="padding:13px;font-size:14px;font-weight:700;
-                     border:none;cursor:pointer;border-radius:10px;">
-        📨 {% trans "Submit Enquiry" %}
-      </button>
+    <!-- Right form -->
+    <div class="enquiry-form-panel">
+      <h2 class="enquiry-form-title">{% trans "Send a Message" %}</h2>
+      <p class="enquiry-form-sub">{% trans "Fill out the form below and our team will reach out to you." %}</p>
 
-    </form>
+      {% if messages %}
+        {% for message in messages %}
+          {% if 'error' in message.tags %}
+            <div class="eq-msg-error"><i class="fas fa-circle-exclamation"></i> {{ message }}</div>
+          {% else %}
+            <div class="eq-msg-success"><i class="fas fa-circle-check"></i> {{ message }}</div>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+
+      <form method="POST" id="enquiryForm">
+        {% csrf_token %}
+
+        <div class="eq-form-group">
+          <label class="eq-label" for="eq_name">{% trans "Full Name" %} <span style="color:var(--purple)">*</span></label>
+          <div class="eq-input-wrap">
+            <i class="fas fa-user"></i>
+            <input type="text" id="eq_name" name="full_name" class="eq-input" placeholder="{% trans 'Enter your full name' %}" required />
+          </div>
+        </div>
+
+        <div class="eq-grid">
+          <div class="eq-form-group">
+            <label class="eq-label" for="eq_email">{% trans "Email" %} <span style="color:var(--purple)">*</span></label>
+            <div class="eq-input-wrap">
+              <i class="fas fa-envelope"></i>
+              <input type="email" id="eq_email" name="email" class="eq-input" placeholder="you@example.com" required />
+            </div>
+          </div>
+          <div class="eq-form-group">
+            <label class="eq-label" for="eq_phone">{% trans "Phone" %} <span style="color:var(--purple)">*</span></label>
+            <div class="eq-input-wrap">
+              <i class="fas fa-phone"></i>
+              <input type="text" id="eq_phone" name="phone" class="eq-input" placeholder="{% trans '+91 XXXXX XXXXX' %}" required />
+            </div>
+          </div>
+        </div>
+
+        <div class="eq-form-group">
+          <label class="eq-label" for="eq_message">{% trans "Your Message" %} <span style="color:var(--purple)">*</span></label>
+          <textarea id="eq_message" name="message" class="eq-textarea" placeholder="{% trans 'Tell us about your fitness goals, package queries, or anything else...' %}" required></textarea>
+        </div>
+
+        <button type="submit" class="eq-submit">
+          <i class="fas fa-paper-plane"></i>
+          {% trans "Submit Enquiry" %}
+        </button>
+      </form>
+    </div>
+
   </div>
+</section>
 {% endblock %}

@@ -9,10 +9,41 @@ from functools import wraps
 from .models import *
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
+from django.db.models import Count
+
+from django.contrib.auth import authenticate
+from django.contrib.auth import login as auth_login  
+from django.contrib.auth import logout as auth_logout
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.urls import reverse
+from functools import wraps
+from .models import *
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import User
 
 # Create your views here.
 def index(request):
-    return render(request,'index.html')
+    trainers = (
+        Trainer.objects
+        .annotate(
+            client_count=Count('customer', distinct=True),
+            diet_count=Count('dietplan', distinct=True),
+            exercise_count=Count('exerciseplan', distinct=True),
+        )
+        .select_related('user')
+        .all()[:4]
+    )
+    context = {
+        'trainers': trainers,
+        'packages': Package.objects.all().order_by('duration')[:3],
+        'feedbacks': Feedback.objects.select_related('customer').order_by('-id')[:3],
+        'equipment': Equipment.objects.filter(status='Working')[:6],
+        'total_members': Customer.objects.count(),
+        'total_trainers': Trainer.objects.count(),
+    }
+    return render(request, 'index.html', context)
+
 
 
 from django.utils.translation import activate
@@ -939,6 +970,9 @@ def customer_required(view_func):
         try:
             customer = Customer.objects.get(user=request.user)
         except Customer.DoesNotExist:
+            if request.user.is_authenticated:
+                messages.info(request, 'This section is reserved for customer accounts.')
+                return redirect_by_role(request.user)
             messages.error(request, 'Access denied. Customer account not found.')
             return redirect('login')
         return view_func(request, *args, **kwargs)

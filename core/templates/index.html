@@ -7,9 +7,7 @@
 
 {% block content %}
 
-<!-- ═══════════════════════════════════════════
-     HERO
-═══════════════════════════════════════════ -->
+
 <section class="hero" id="home">
   <div class="hero-media" aria-hidden="true">
     <video class="hero-video" autoplay muted loop playsinline preload="metadata">
@@ -19,7 +17,7 @@
   </div>
 
   <div class="container hero-inner">
-    <!-- Left -->
+    
     <div>
       <div class="hero-tag">
         <span class="hero-tag-dot"></span>
@@ -47,14 +45,14 @@
           <div class="stat"><div class="stat-val">1,200+</div><div class="stat-lab">{% trans "Active Members" %}</div></div>
           <div class="stat"><div class="stat-val">5,000+</div><div class="stat-lab">{% trans "Workouts Logged" %}</div></div>
           <div class="stat"><div class="stat-val">{% convert_price 50000 %}+</div><div class="stat-lab">{% trans "Revenue Generated" %}</div></div>
+          <div class="stat"><div class="stat-val">{{ trainers|length|default:"15" }}+</div><div class="stat-lab">{% trans "Expert Trainers" %}</div></div>
           <div class="stat"><div class="stat-val stat-val-text">{% trans "Strength, Yoga" %}</div><div class="stat-lab">{% trans "Top Categories" %}</div></div>
         </div>
       </div>
     </div>
-
-    <!-- Right info cards -->
+    
     <div class="hero-right">
-      <div class="info-card">
+      <div class="info-card reveal d1">
         <div class="info-icon ic-red">🏋️</div>
         <div class="info-card-content">
           <div class="info-card-title">{% trans "Today's Workout" %}</div>
@@ -64,7 +62,17 @@
         <span class="info-badge badge-red">{% trans "Active" %}</span>
       </div>
 
-      <div class="info-card">
+      <div class="info-card reveal d2">
+        <div class="info-icon ic-purple">🏛️</div>
+        <div class="info-card-content">
+          <div class="info-card-title">{% trans "Equipment Status" %}</div>
+          <div class="info-card-desc">{{ equipment|length|default:"12" }}+ {% trans "machines online & ready" %}</div>
+          <div class="progress"><div class="progress-fill pf-1" style="width: 100%;"></div></div>
+        </div>
+        <span class="info-badge badge-purple">{% trans "Ready" %}</span>
+      </div>
+
+      <div class="info-card reveal d3">
         <div class="info-icon ic-grey">🥗</div>
         <div class="info-card-content">
           <div class="info-card-title">{% trans "Nutrition Plan" %}</div>
@@ -161,5 +169,289 @@
     </div>
   </div>
 </section>
+
+<!-- ═══════════════════════════════════════════
+     PREMIUM EQUIPMENT
+═══════════════════════════════════════════ -->
+<section class="section" id="equipment" style="background: var(--dark);">
+  <div class="container">
+    <div class="reveal">
+      <div class="label">{% trans "The Gear" %}</div>
+      <h2 class="title" style="margin-bottom: 40px;">{% trans "WORLD-CLASS" %}<br>{% trans "EQUIPMENT" %}</h2>
+    </div>
+
+    <div class="cat-cards" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+      {% for item in equipment %}
+      <div class="cat-card reveal">
+        <span class="cat-emoji">⚙️</span>
+        <div>
+          <div class="cat-title">{{ item.name }}</div>
+          <div class="cat-desc">{{ item.category }} — {{ item.status }}</div>
+        </div>
+        <div class="cat-num">{{ forloop.counter|stringformat:"02d" }}</div>
+      </div>
+      {% empty %}
+      <div class="cat-card reveal">
+        <span class="cat-emoji">🏋️</span>
+        <div>
+          <div class="cat-title">{% trans "Olympic Racks" %}</div>
+          <div class="cat-desc">{% trans "Professional grade strength equipment." %}</div>
+        </div>
+      </div>
+      <div class="cat-card reveal">
+        <span class="cat-emoji">🏃</span>
+        <div>
+          <div class="cat-title">{% trans "Cardio Zone" %}</div>
+          <div class="cat-desc">{% trans "High-end treadmills and ellipticals." %}</div>
+        </div>
+      </div>
+      <div class="cat-card reveal">
+        <span class="cat-emoji">🧘</span>
+        <div>
+          <div class="cat-title">{% trans "Yoga Studio" %}</div>
+          <div class="cat-desc">{% trans "Premium mats and props for mindful practice." %}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     EXPERT TRAINERS
+═══════════════════════════════════════════ -->
+<section class="section" id="trainers" style="background: var(--dark);">
+  <div class="container">
+    <div style="text-align: center; margin-bottom: 60px;" class="reveal">
+      <div class="label" style="justify-content: center;">{% trans "Elite Staff" %}</div>
+      <h2 class="title">{% trans "MEET YOUR" %}<br>{% trans "MENTORS" %}</h2>
+      <p class="sub" style="margin: 14px auto 0; max-width: 520px;">{% trans "Our certified trainers bring years of expertise to guide you on every step of your transformation." %}</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px;">
+      {% for trainer in trainers %}
+      <div class="reveal d{{ forloop.counter }}" style="
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 36px 28px 28px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        transition: all var(--t);
+        position: relative;
+        overflow: hidden;
+      " onmouseover="this.style.borderColor='rgba(124,58,237,0.4)'; this.style.transform='translateY(-6px)'; this.style.boxShadow='0 24px 50px rgba(0,0,0,0.4)'"
+         onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+
+        <!-- Top accent bar -->
+        <div class="{% if trainer.training_category == 'Gym' %}trainer-accent-gym{% elif trainer.training_category == 'Yoga' %}trainer-accent-yoga{% else %}trainer-accent-zumba{% endif %}" style="position:absolute;top:0;left:0;right:0;height:3px;"></div>
+
+        <!-- Avatar -->
+        <div style="
+          width: 80px; height: 80px; border-radius: 50%;
+          background: linear-gradient(135deg, var(--purple-dim), var(--purple));
+          display: flex; align-items: center; justify-content: center;
+          font-family: var(--font-d); font-size: 32px; color: #fff;
+          letter-spacing: 1px; margin-bottom: 18px;
+          box-shadow: 0 0 0 4px rgba(124,58,237,0.2), 0 0 0 8px rgba(124,58,237,0.08);
+          flex-shrink: 0;
+        ">{{ trainer.full_name|slice:":1"|upper }}</div>
+
+        <!-- Name -->
+        <h3 style="font-family: var(--font-d); font-size: 26px; letter-spacing: 1.5px; color: var(--white); margin-bottom: 6px; line-height: 1;">
+          {{ trainer.full_name }}
+        </h3>
+
+        <!-- Specialization -->
+        <p style="font-size: 13px; color: var(--grey2); margin-bottom: 16px; line-height: 1.5;">
+          {{ trainer.specialization|default:"Fitness Professional" }}
+        </p>
+
+        <!-- Category badge -->
+        <div class="{% if trainer.training_category == 'Gym' %}trainer-badge-gym{% elif trainer.training_category == 'Yoga' %}trainer-badge-yoga{% else %}trainer-badge-zumba{% endif %}" style="
+          display: inline-flex; align-items: center; gap: 6px;
+          font-size: 10px; font-weight: 700; letter-spacing: 2px;
+          text-transform: uppercase; padding: 6px 14px;
+          border-radius: 100px; margin-bottom: 24px;
+        ">
+          {% if trainer.training_category == 'Gym' %}<i class="fas fa-dumbbell"></i>
+          {% elif trainer.training_category == 'Yoga' %}<i class="fas fa-spa"></i>
+          {% else %}<i class="fas fa-music"></i>
+          {% endif %}
+          {{ trainer.training_category }}
+        </div>
+
+        <!-- Tags row -->
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 20px;">
+          <span style="font-size: 11px; background: rgba(124,58,237,0.1); border: 1px solid rgba(124,58,237,0.2); color: var(--purple-lite); padding: 4px 10px; border-radius: 20px;">
+            <i class="fas fa-check-circle" style="margin-right: 4px;"></i> {% trans "Certified" %}
+          </span>
+          <span style="font-size: 11px; background: rgba(124,58,237,0.1); border: 1px solid rgba(124,58,237,0.2); color: var(--purple-lite); padding: 4px 10px; border-radius: 20px;">
+            <i class="fas fa-star" style="margin-right: 4px;"></i> {% trans "Top Rated" %}
+          </span>
+          {% if trainer.specialization %}
+          <span style="font-size: 11px; background: rgba(124,58,237,0.1); border: 1px solid rgba(124,58,237,0.2); color: var(--purple-lite); padding: 4px 10px; border-radius: 20px;">
+            <i class="fas fa-fire" style="margin-right: 4px;"></i> {{ trainer.specialization }}
+          </span>
+          {% endif %}
+        </div>
+        
+
+        <!-- Stats row — live data from queryset annotations -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; margin-bottom: 20px; width: 100%; background: var(--border); border-radius: 12px; overflow: hidden;">
+          <div style="background: var(--card2); padding: 14px 8px; text-align: center;">
+            <div style="font-family: var(--font-d); font-size: 24px; color: var(--purple); line-height: 1;">{{ trainer.client_count }}</div>
+            <div style="font-size: 10px; color: var(--grey2); letter-spacing: 1px; text-transform: uppercase; margin-top: 3px;">{% trans "Clients" %}</div>
+          </div>
+          <div style="background: var(--card2); padding: 14px 8px; text-align: center;">
+            <div style="font-family: var(--font-d); font-size: 24px; color: var(--purple); line-height: 1;">{{ trainer.diet_count }}</div>
+            <div style="font-size: 10px; color: var(--grey2); letter-spacing: 1px; text-transform: uppercase; margin-top: 3px;">{% trans "Diet Plans" %}</div>
+          </div>
+          <div style="background: var(--card2); padding: 14px 8px; text-align: center;">
+            <div style="font-family: var(--font-d); font-size: 24px; color: var(--purple); line-height: 1;">{{ trainer.exercise_count }}</div>
+            <div style="font-size: 10px; color: var(--grey2); letter-spacing: 1px; text-transform: uppercase; margin-top: 3px;">{% trans "Workouts" %}</div>
+          </div>
+        </div>
+
+        <!-- Contact info -->
+        <div style="width: 100%; margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--grey2);">
+            <i class="fas fa-envelope" style="color: var(--purple-lite); width: 14px;"></i>
+            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ trainer.user.email }}</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--grey2);">
+            <i class="fas fa-id-badge" style="color: var(--purple-lite); width: 14px;"></i>
+            <span>{{ trainer.training_category }} {% trans "Specialist" %} · {% trans "PRO Level" %}</span>
+          </div>
+        </div>
+
+        <!-- CTA button -->
+        <a href="{% url 'enquiry_form' %}" style="
+          width: 100%; padding: 11px;
+          background: rgba(124,58,237,0.1);
+          border: 1px solid rgba(124,58,237,0.25);
+          color: var(--purple-lite);
+          border-radius: var(--r);
+          font-size: 12px; font-weight: 700;
+          letter-spacing: 1.5px; text-transform: uppercase;
+          text-decoration: none;
+          display: flex; align-items: center; justify-content: center; gap: 8px;
+          transition: all var(--t);
+        " onmouseover="this.style.background='var(--purple)';this.style.color='#fff';this.style.borderColor='var(--purple)'"
+           onmouseout="this.style.background='rgba(124,58,237,0.1)';this.style.color='var(--purple-lite)';this.style.borderColor='rgba(124,58,237,0.25)'">
+          <i class="fas fa-calendar-check"></i> {% trans "Book a Session" %}
+        </a>
+      </div>
+      {% empty %}
+      <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
+        <div style="font-size: 48px; margin-bottom: 16px;">🏋️</div>
+        <h3 style="font-family: var(--font-d); font-size: 28px; color: var(--grey2); letter-spacing: 2px;">{% trans "TRAINERS ARRIVING SOON" %}</h3>
+        <p style="font-size: 13px; color: var(--grey2); margin-top: 8px;">{% trans "Our team of certified professionals is being assembled." %}</p>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- View All CTA -->
+    <div style="text-align: center; margin-top: 50px;" class="reveal">
+      <a href="{% url 'enquiry_form' %}" class="btn btn-outline" style="font-size: 13px;">
+        <i class="fas fa-users"></i> {% trans "Meet All Trainers" %} →
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     MEMBERSHIP PACKAGES (TEASER)
+═══════════════════════════════════════════ -->
+<section class="section roles-bg" id="packages">
+  <div class="container">
+    <div class="reveal" style="margin-bottom: 50px;">
+      <div class="label">{% trans "Plans" %}</div>
+      <h2 class="title">{% trans "INVEST IN" %}<br>{% trans "YOURSELF" %}</h2>
+    </div>
+
+    <div class="pkg-grid">
+      {% for pkg in packages %}
+      <div class="pkg-card reveal {% if forloop.counter == 2 %}featured{% endif %}">
+        <div class="pkg-duration">{{ pkg.duration }} {% trans "Months" %}</div>
+        <div class="pkg-price">{% convert_price pkg.price %}</div>
+        <div class="pkg-per">{% trans "One-time payment" %}</div>
+        <div class="pkg-divider"></div>
+        <div class="pkg-features">
+          <div class="pkg-feat"><span class="check check-on">&#10003;</span> {{ pkg.package_name }}</div>
+          <div class="pkg-feat"><span class="check check-on">&#10003;</span> {% trans "All-hours access" %}</div>
+          <div class="pkg-feat"><span class="check check-on">&#10003;</span> {% trans "Free locker" %}</div>
+        </div>
+        <a href="{% url 'package' %}" class="btn btn-outline" style="width: 100%; justify-content: center;">{% trans "Review Plan" %}</a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     TESTIMONIALS
+═══════════════════════════════════════════ -->
+<section class="section" id="testimonials">
+  <div class="container">
+    <div class="reveal" style="text-align: center; margin-bottom: 60px;">
+      <div class="label" style="justify-content: center;">{% trans "Stories" %}</div>
+      <h2 class="title">{% trans "SUCCESS" %}<br>{% trans "STORIES" %}</h2>
+    </div>
+
+    <div class="testi-grid">
+      {% for feed in feedbacks %}
+      <div class="testi-card reveal d{{ forloop.counter }}">
+        <div class="stars">
+          {% for i in "12345" %}
+          <span class="star">{% if forloop.counter <= feed.rating %}★{% else %}☆{% endif %}</span>
+          {% endfor %}
+        </div>
+        <p class="testi-quote">"{{ feed.message }}"</p>
+        <div class="testi-author">
+          <div class="testi-av">{{ feed.customer.full_name|slice:":1" }}</div>
+          <div>
+            <div class="testi-name">{{ feed.customer.full_name }}</div>
+            <div class="testi-role">{% trans "Pulse Member" %}</div>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="testi-card reveal">
+        <div class="stars">★★★★★</div>
+        <p class="testi-quote">"The best gym environment I've ever been in. The progress tracking makes such a huge difference!"</p>
+        <div class="testi-author">
+          <div class="testi-av">JD</div>
+          <div>
+            <div class="testi-name">John Doe</div>
+            <div class="testi-role">{% trans "Gym Enthusiast" %}</div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     FINAL CTA
+═══════════════════════════════════════════ -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-inner">
+      <div>
+        <h2 class="cta-title">{% trans "READY TO START" %}<br>{% trans "THE JOURNEY?" %}</h2>
+        <p class="cta-sub">{% trans "Join FitnessMaster today and get access to world-class trainers, personalized nutrition, and smart tracking." %}</p>
+      </div>
+      <div style="display: flex; gap: 15px;">
+        <a href="{% url 'register' %}" class="btn-white">{% trans "Join Now" %}</a>
+        <a href="{% url 'enquiry_form' %}" class="btn btn-outline" style="border-color: rgba(255,255,255,0.3);">{% trans "Contact Us" %}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
 
 {% endblock %}

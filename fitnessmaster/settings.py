@@ -33,7 +33,7 @@ DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://*.railway.app',
+    'https://fitnessmaster-two.vercel.app/',
     'http://localhost',
     'http://127.0.0.1',
 ]
