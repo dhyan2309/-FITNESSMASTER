@@ -196,7 +196,6 @@ tqdm==4.67.1
 twilio==9.5.2
 typing-inspection==0.4.2
 typing_extensions==4.15.0
-tzdata==2024.2
 tzlocal==5.3.1
 ultralytics==8.3.208
 ultralytics-thop==2.0.17
