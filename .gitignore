@@ -8,3 +8,6 @@ ENV/
 .vscode/
 *.log
 media/product_images/
+.vercel
+.env*
+node_modules
