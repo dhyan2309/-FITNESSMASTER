@@ -34,7 +34,7 @@ cssselect2==0.9.0
 cycler==0.12.1
 defusedxml==0.7.1
 dj-database-url==3.1.2
-Django==6.0.7
+Django==5.2.5
 django-admin-interface==0.32.0
 django-allauth==65.16.1
 django-appconf==1.2.0
