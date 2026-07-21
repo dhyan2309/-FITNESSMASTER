@@ -1,0 +1,37 @@
+# Ignore virtual environments
+.venv
+venv
+ENV
+env
+
+# Ignore version control files
+.git
+.gitignore
+
+# Ignore Vercel metadata
+.vercel
+
+# Ignore local dependencies and static/media files
+node_modules
+staticfiles/
+media/
+
+# Ignore local sqlite databases
+db.sqlite3
+*.sqlite3
+
+# Ignore environment files
+.env
+.env.local
+.env.*
+
+# Ignore cache directories and files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore local check output text files
+check_errors.txt
+check_output.txt
+errors_full.txt
